@@ -369,6 +369,16 @@ export default function Home() {
                   <li>Uzbek — Native / Bilingual Proficiency</li>
                 </ul>
               </div>
+              <div className="mt-6 rounded-[28px] border border-slate-700/90 bg-[var(--surface)] p-5 text-sm text-slate-800 dark:border-slate-700/80 dark:bg-[var(--surface-strong)] dark:text-slate-300">
+                <h3 className="font-semibold text-slate-950 dark:text-white">{i18n.interests}</h3>
+                <div className="mt-3 flex flex-wrap gap-2">
+                  {interests.map((interest) => (
+                    <span key={interest} className="rounded-full bg-emerald-500/10 px-3 py-1 text-xs text-emerald-700 dark:text-emerald-300">
+                      {interest}
+                    </span>
+                  ))}
+                </div>
+              </div>
             </div>
           </div>
         </section>
