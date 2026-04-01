@@ -4,17 +4,34 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "prisma generate && next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "postinstall": "prisma generate",
+    "post:new": "node scripts/new-post.mjs"
   },
   "dependencies": {
+    "@prisma/client": "^5.22.0",
+    "@uiw/react-md-editor": "^4.1.0",
+    "bcryptjs": "^3.0.3",
+    "cloudinary": "^2.9.0",
+    "framer-motion": "^12.38.0",
+    "github-slugger": "^2.0.0",
+    "gray-matter": "^4.0.3",
+    "jose": "^6.2.2",
     "next": "16.2.1",
+    "prisma": "^5.22.0",
+    "prismjs": "^1.30.0",
     "react": "19.2.4",
-    "react-dom": "19.2.4"
+    "react-dom": "19.2.4",
+    "react-markdown": "^10.1.0",
+    "rehype-highlight": "^7.0.2",
+    "rehype-slug": "^6.0.0",
+    "remark-gfm": "^4.0.1"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
+    "@types/bcryptjs": "^2.4.6",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
