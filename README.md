@@ -63,6 +63,7 @@ You can manage posts from UI at `/admin`:
 Create `.env.local` with:
 
 ```bash
+DATABASE_URL="file:./data/app.db"
 ADMIN_EMAIL=your@email.com
 ADMIN_PASSWORD=your_strong_password
 ADMIN_SESSION_SECRET=your_long_random_secret
@@ -70,6 +71,8 @@ ADMIN_SESSION_SECRET=your_long_random_secret
 
 - Open `/admin/login` and sign in with your credentials.
 - Only logged-in sessions can access `/admin` and publish posts.
+
+> In production, do not commit `.env.local`. Instead set `DATABASE_URL`, `ADMIN_EMAIL`, `ADMIN_PASSWORD`, and `ADMIN_SESSION_SECRET` in your host provider's environment settings.
 
 ## Engagement Features
 
