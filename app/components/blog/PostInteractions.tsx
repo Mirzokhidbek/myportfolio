@@ -1,9 +1,11 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useSyncExternalStore } from "react";
 
 type Stats = { views: number; likes: number };
+
+const noopSubscribe = () => () => {};
 
 export default function PostInteractions({
   slug,
@@ -16,17 +18,16 @@ export default function PostInteractions({
   const [liked, setLiked] = useState(false);
   const [userId, setUserId] = useState<string | null>(null);
   const [likeError, setLikeError] = useState("");
-  const [mounted, setMounted] = useState(false);
-  const [canShare, setCanShare] = useState(false);
-  const [shareUrl, setShareUrl] = useState("");
+  // Browser-only values; on the server these return the fallback.
+  const mounted = useSyncExternalStore(noopSubscribe, () => true, () => false);
+  const canShare = useSyncExternalStore(noopSubscribe, () => "share" in navigator, () => false);
+  const shareUrl = useSyncExternalStore(
+    noopSubscribe,
+    () => `${window.location.origin}/blog/${slug}`,
+    () => ""
+  );
 
   useEffect(() => {
-    setMounted(true);
-    setCanShare(typeof navigator !== "undefined" && "share" in navigator);
-    if (typeof window !== "undefined") {
-      setShareUrl(`${window.location.origin}/blog/${slug}`);
-    }
-
     let cancelled = false;
     const load = async () => {
       const meRes = await fetch("/api/auth/me", { cache: "no-store" });
