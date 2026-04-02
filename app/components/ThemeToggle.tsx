@@ -1,34 +1,31 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useSyncExternalStore } from "react";
 
 type Theme = "dark" | "light";
 
+// The theme lives on <html data-theme>, set by the init script in the root layout.
+function subscribe(onChange: () => void) {
+  const observer = new MutationObserver(onChange);
+  observer.observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
+  return () => observer.disconnect();
+}
+
+function getTheme(): Theme {
+  return document.documentElement.dataset.theme === "dark" ? "dark" : "light";
+}
+
+function getServerTheme(): Theme {
+  return "light";
+}
+
 export default function ThemeToggle() {
-  const [theme, setTheme] = useState<Theme>("light");
-
-  const applyTheme = (value: Theme) => {
-    localStorage.setItem("theme", value);
-    document.documentElement.dataset.theme = value;
-    setTheme(value);
-  };
-
-  useEffect(() => {
-    const saved = localStorage.getItem("theme");
-    const next: Theme =
-      saved === "light" || saved === "dark"
-        ? saved
-        : window.matchMedia?.("(prefers-color-scheme: dark)").matches
-        ? "dark"
-        : "light";
-
-    applyTheme(next);
-  }, []);
+  const theme = useSyncExternalStore(subscribe, getTheme, getServerTheme);
 
   function toggleTheme() {
-    const next: Theme =
-      document.documentElement.dataset.theme === "dark" ? "light" : "dark";
-    applyTheme(next);
+    const next: Theme = theme === "dark" ? "light" : "dark";
+    localStorage.setItem("theme", next);
+    document.documentElement.dataset.theme = next;
   }
 
   return (
