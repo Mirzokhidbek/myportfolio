@@ -65,6 +65,35 @@ export function extractHeadings(markdown: string) {
   return headings;
 }
 
+function parsePost(slug: string, raw: string, excerptLength: number) {
+  const parsed = matter(raw);
+
+  const title = String(parsed.data.title ?? slug);
+  const date = String(parsed.data.date ?? "1970-01-01");
+  const author = String(parsed.data.author ?? "").trim() || "Editor";
+  const tags = Array.isArray(parsed.data.tags)
+    ? parsed.data.tags.map((t) => normalizeTag(String(t)))
+    : [];
+  const category = String(parsed.data.category ?? "general").trim().toLowerCase();
+  const coverImage = String(parsed.data.coverImage ?? "").trim();
+  const excerpt =
+    String(parsed.data.excerpt ?? "").trim() ||
+    String(parsed.content.trim().slice(0, excerptLength));
+
+  const item: BlogPostListItem = {
+    slug,
+    title,
+    date,
+    author,
+    tags,
+    category,
+    coverImage,
+    excerpt,
+    readingTimeMinutes: estimateReadingTimeMinutes(parsed.content),
+  };
+  return { item, content: parsed.content };
+}
+
 export async function getAllPosts(): Promise<BlogPostListItem[]> {
   const entries = await fs.readdir(BLOG_DIR, { withFileTypes: true });
   const mdFiles = entries
@@ -75,33 +104,8 @@ export async function getAllPosts(): Promise<BlogPostListItem[]> {
 
   for (const fileName of mdFiles) {
     const slug = fileName.replace(/\.md$/, "");
-    const filePath = path.join(BLOG_DIR, fileName);
-    const raw = await fs.readFile(filePath, "utf8");
-    const parsed = matter(raw);
-
-    const title = String(parsed.data.title ?? slug);
-    const date = String(parsed.data.date ?? "1970-01-01");
-    const author = String(parsed.data.author ?? "").trim() || "Editor";
-    const tags = Array.isArray(parsed.data.tags)
-      ? parsed.data.tags.map((t) => normalizeTag(String(t)))
-      : [];
-    const category = String(parsed.data.category ?? "general").trim().toLowerCase();
-    const coverImage = String(parsed.data.coverImage ?? "").trim();
-    const excerpt =
-      String(parsed.data.excerpt ?? "").trim() ||
-      String(parsed.content.trim().slice(0, 140));
-
-    posts.push({
-      slug,
-      title,
-      date,
-      author,
-      tags,
-      category,
-      coverImage,
-      excerpt,
-      readingTimeMinutes: estimateReadingTimeMinutes(parsed.content),
-    });
+    const raw = await fs.readFile(path.join(BLOG_DIR, fileName), "utf8");
+    posts.push(parsePost(slug, raw, 140).item);
   }
 
   posts.sort((a, b) => (a.date < b.date ? 1 : -1));
@@ -113,35 +117,9 @@ export async function getPostBySlug(slug: string): Promise<BlogPost | null> {
 
   try {
     const raw = await fs.readFile(filePath, "utf8");
-    const parsed = matter(raw);
-
-    const title = String(parsed.data.title ?? slug);
-    const date = String(parsed.data.date ?? "1970-01-01");
-    const author = String(parsed.data.author ?? "").trim() || "Editor";
-    const tags = Array.isArray(parsed.data.tags)
-      ? parsed.data.tags.map((t) => normalizeTag(String(t)))
-      : [];
-    const category = String(parsed.data.category ?? "general").trim().toLowerCase();
-    const coverImage = String(parsed.data.coverImage ?? "").trim();
-    const excerpt =
-      String(parsed.data.excerpt ?? "").trim() ||
-      String(parsed.content.trim().slice(0, 160));
-
-    return {
-      slug,
-      title,
-      date,
-      author,
-      tags,
-      category,
-      coverImage,
-      excerpt,
-      content: parsed.content,
-      filePath,
-      readingTimeMinutes: estimateReadingTimeMinutes(parsed.content),
-    };
+    const { item, content } = parsePost(slug, raw, 160);
+    return { ...item, content, filePath };
   } catch {
     return null;
   }
 }
-
