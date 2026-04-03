@@ -1,8 +1,14 @@
 import fs from "fs/promises";
 import path from "path";
 import matter from "gray-matter";
+import { isValidSlug } from "@/lib/blog";
 
 const BLOG_DIR = path.join(process.cwd(), "content", "blog");
+
+function postPath(slug: string) {
+  if (!isValidSlug(slug)) throw new Error("Invalid post slug.");
+  return path.join(BLOG_DIR, `${slug}.md`);
+}
 
 function isEnoent(err: unknown): boolean {
   return typeof err === "object" && err !== null && "code" in err && (err as NodeJS.ErrnoException).code === "ENOENT";
@@ -100,7 +106,7 @@ export async function createPost(input: AdminPostInput) {
 }
 
 export async function updatePost(slug: string, input: Partial<AdminPostInput>) {
-  const filePath = path.join(BLOG_DIR, `${slug}.md`);
+  const filePath = postPath(slug);
   let raw: string;
   try {
     raw = await fs.readFile(filePath, "utf8");
@@ -147,7 +153,7 @@ export async function updatePost(slug: string, input: Partial<AdminPostInput>) {
 }
 
 export async function deletePost(slug: string) {
-  const filePath = path.join(BLOG_DIR, `${slug}.md`);
+  const filePath = postPath(slug);
   try {
     await fs.unlink(filePath);
   } catch (e) {
@@ -156,7 +162,8 @@ export async function deletePost(slug: string) {
 }
 
 export async function getPostRawBySlug(slug: string) {
-  const filePath = path.join(BLOG_DIR, `${slug}.md`);
+  if (!isValidSlug(slug)) return null;
+  const filePath = postPath(slug);
   let raw: string;
   try {
     raw = await fs.readFile(filePath, "utf8");

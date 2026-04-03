@@ -24,6 +24,11 @@ export type BlogPost = BlogPostListItem & {
 
 const BLOG_DIR = path.join(process.cwd(), "content", "blog");
 
+/** Slugs are file names in content/blog, so only allow safe characters (no "/" or ".."). */
+export function isValidSlug(slug: string) {
+  return /^[a-zA-Z0-9][a-zA-Z0-9_-]*$/.test(slug);
+}
+
 function estimateReadingTimeMinutes(markdown: string) {
   // Rough estimate: 200 words/min
   const words = markdown
@@ -113,6 +118,7 @@ export async function getAllPosts(): Promise<BlogPostListItem[]> {
 }
 
 export async function getPostBySlug(slug: string): Promise<BlogPost | null> {
+  if (!isValidSlug(slug)) return null;
   const filePath = path.join(BLOG_DIR, `${slug}.md`);
 
   try {
