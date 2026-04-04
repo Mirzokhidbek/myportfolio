@@ -38,8 +38,10 @@ export async function addComment(slug: string, userId: string, message: string) 
 }
 
 export async function getStats(slug: string) {
-  const stat = await prisma.postStat.findUnique({ where: { postSlug: slug } });
-  const likes = await prisma.like.count({ where: { postSlug: slug } });
+  const [stat, likes] = await Promise.all([
+    prisma.postStat.findUnique({ where: { postSlug: slug } }),
+    prisma.like.count({ where: { postSlug: slug } }),
+  ]);
   return {
     views: stat?.views ?? 0,
     likes,
