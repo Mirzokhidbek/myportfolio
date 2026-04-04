@@ -1,5 +1,7 @@
 import { prisma } from "@/lib/prisma";
 
+export const MAX_COMMENT_LENGTH = 1000;
+
 export type PublicComment = {
   id: string;
   name: string;
@@ -25,6 +27,9 @@ export async function addComment(slug: string, userId: string, message: string) 
   const cleanMessage = message.trim();
   if (!cleanMessage) {
     throw new Error("Comment is required.");
+  }
+  if (cleanMessage.length > MAX_COMMENT_LENGTH) {
+    throw new Error(`Comment must be ${MAX_COMMENT_LENGTH} characters or less.`);
   }
 
   return prisma.comment.create({

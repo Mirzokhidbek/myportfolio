@@ -75,6 +75,7 @@ export default function CommentsSection({ slug }: { slug: string }) {
             value={message}
             onChange={(e) => setMessage(e.target.value)}
             placeholder="Your comment"
+            maxLength={1000}
             className="w-full min-h-[110px] rounded-xl border border-slate-300 bg-white text-slate-900 placeholder:text-slate-400 dark:border-white/10 dark:bg-black/30 dark:text-white dark:placeholder:text-zinc-500 px-3 py-2 outline-none focus:ring-2 focus:ring-emerald-500/40"
             required
           />
