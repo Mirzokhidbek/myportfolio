@@ -99,6 +99,16 @@ function parsePost(slug: string, raw: string, excerptLength: number) {
   return { item, content: parsed.content };
 }
 
+export async function postExists(slug: string) {
+  if (!isValidSlug(slug)) return false;
+  try {
+    await fs.access(path.join(BLOG_DIR, `${slug}.md`));
+    return true;
+  } catch {
+    return false;
+  }
+}
+
 export async function getAllPosts(): Promise<BlogPostListItem[]> {
   const entries = await fs.readdir(BLOG_DIR, { withFileTypes: true });
   const mdFiles = entries

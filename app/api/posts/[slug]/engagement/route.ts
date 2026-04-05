@@ -5,6 +5,7 @@ import {
   toggleLike,
 } from "@/lib/engagement";
 import { getSession } from "@/lib/session";
+import { postExists } from "@/lib/blog";
 
 type ActionBody = {
   action?: "view" | "like";
@@ -16,6 +17,9 @@ export async function GET(
 ) {
   try {
     const { slug } = await context.params;
+    if (!(await postExists(slug))) {
+      return NextResponse.json({ ok: false, error: "Post not found." }, { status: 404 });
+    }
     const session = await getSession();
     const { stats, liked } = await getEngagement(slug, session?.sub);
     return NextResponse.json({ ok: true, stats, liked });
@@ -33,6 +37,9 @@ export async function POST(
     const body = (await req.json()) as ActionBody;
     const { slug } = await context.params;
     const action = body.action ?? "view";
+    if (!(await postExists(slug))) {
+      return NextResponse.json({ ok: false, error: "Post not found." }, { status: 404 });
+    }
 
     if (action !== "view" && action !== "like") {
       return NextResponse.json(

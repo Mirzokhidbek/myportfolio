@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { addComment, getComments } from "@/lib/engagement";
 import { getSession } from "@/lib/session";
+import { postExists } from "@/lib/blog";
 
 type CreateBody = {
   message?: string;
@@ -12,6 +13,9 @@ export async function GET(
 ) {
   try {
     const { slug } = await context.params;
+    if (!(await postExists(slug))) {
+      return NextResponse.json({ ok: false, error: "Post not found." }, { status: 404 });
+    }
     const comments = await getComments(slug);
     return NextResponse.json({ ok: true, comments });
   } catch (error) {
@@ -35,6 +39,9 @@ export async function POST(
 
     const body = (await req.json()) as CreateBody;
     const { slug } = await context.params;
+    if (!(await postExists(slug))) {
+      return NextResponse.json({ ok: false, error: "Post not found." }, { status: 404 });
+    }
     const row = await addComment(slug, session.sub, String(body.message ?? ""));
     const comment = {
       id: row.id,
