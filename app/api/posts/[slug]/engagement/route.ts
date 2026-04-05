@@ -34,6 +34,13 @@ export async function POST(
     const { slug } = await context.params;
     const action = body.action ?? "view";
 
+    if (action !== "view" && action !== "like") {
+      return NextResponse.json(
+        { ok: false, error: 'Action must be "view" or "like".' },
+        { status: 400 }
+      );
+    }
+
     if (action === "view") {
       const stats = await incrementView(slug);
       const session = await getSession();
