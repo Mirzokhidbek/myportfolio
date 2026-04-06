@@ -4,6 +4,8 @@ import { requireAdmin } from "@/lib/session";
 
 export const runtime = "nodejs";
 
+const MAX_IMAGE_BYTES = 5 * 1024 * 1024;
+
 function getCloudinaryConfig() {
   const cloud_name = process.env.CLOUDINARY_CLOUD_NAME;
   const api_key = process.env.CLOUDINARY_API_KEY;
@@ -32,6 +34,18 @@ export async function POST(req: Request) {
     if (!image || !(image instanceof File)) {
       return NextResponse.json(
         { ok: false, error: "Missing image file." },
+        { status: 400 }
+      );
+    }
+    if (!image.type.startsWith("image/")) {
+      return NextResponse.json(
+        { ok: false, error: "Only image files can be uploaded." },
+        { status: 400 }
+      );
+    }
+    if (image.size > MAX_IMAGE_BYTES) {
+      return NextResponse.json(
+        { ok: false, error: "Image must be 5 MB or smaller." },
         { status: 400 }
       );
     }
