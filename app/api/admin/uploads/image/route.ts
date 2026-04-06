@@ -21,6 +21,14 @@ function getCloudinaryConfig() {
   return { cloud_name, api_key, api_secret, folder };
 }
 
+/** Keep uploads inside the configured folder, e.g. "blog" or "blog/covers". */
+function resolveFolder(requested: string, base: string) {
+  const folder = requested.trim().replace(/^\/+|\/+$/g, "");
+  const safe = /^[a-zA-Z0-9_\-/]+$/.test(folder) && !folder.includes("..");
+  if (safe && (folder === base || folder.startsWith(`${base}/`))) return folder;
+  return base;
+}
+
 export async function POST(req: Request) {
   try {
     if (!(await requireAdmin())) {
@@ -29,7 +37,8 @@ export async function POST(req: Request) {
 
     const formData = await req.formData();
     const image = formData.get("image");
-    const targetFolder = String(formData.get("folder") ?? getCloudinaryConfig().folder);
+    const baseFolder = getCloudinaryConfig().folder;
+    const targetFolder = resolveFolder(String(formData.get("folder") ?? baseFolder), baseFolder);
 
     if (!image || !(image instanceof File)) {
       return NextResponse.json(
