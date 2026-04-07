@@ -5,6 +5,8 @@ import { roleForNewUser } from "@/lib/user-role";
 import { signAuthToken, AUTH_COOKIE } from "@/lib/auth-token";
 import { authCookieOptions } from "@/lib/auth-cookie";
 
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
 type Body = {
   email?: string;
   password?: string;
@@ -18,17 +20,20 @@ export async function POST(req: Request) {
     const password = String(body.password ?? "");
     const name = String(body.name ?? "").trim();
 
-    if (!email || !email.includes("@")) {
+    if (!EMAIL_RE.test(email)) {
       return NextResponse.json({ ok: false, error: "Valid email is required." }, { status: 400 });
     }
-    if (password.length < 8) {
+    if (password.length < 8 || password.length > 72) {
       return NextResponse.json(
-        { ok: false, error: "Password must be at least 8 characters." },
+        { ok: false, error: "Password must be 8 to 72 characters." },
         { status: 400 }
       );
     }
-    if (!name) {
-      return NextResponse.json({ ok: false, error: "Name is required." }, { status: 400 });
+    if (!name || name.length > 60) {
+      return NextResponse.json(
+        { ok: false, error: "Name is required and must be 60 characters or less." },
+        { status: 400 }
+      );
     }
 
     const passwordHash = await bcrypt.hash(password, 12);
