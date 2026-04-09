@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import GlobalSiteControls from "@/app/components/GlobalSiteControls";
+import { SITE_URL } from "@/lib/site";
 
 // Runs before hydration so the saved theme is applied without a flash.
 const themeInitScript = `
@@ -31,6 +32,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL(SITE_URL),
   title: "Mirzohid | Portfolio + Blog",
   description: "A portfolio and blog project featuring design work, case studies, and articles.",
 };
