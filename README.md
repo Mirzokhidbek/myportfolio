@@ -1,105 +1,143 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Mirzohid — Portfolio + Blog
 
-## Getting Started
+Personal portfolio and blog built with Next.js. The home page shows experience, education, skills, projects and interests in English and Uzbek. The blog is written in Markdown and managed from an admin panel, and readers can sign up to like and comment on posts.
 
-First, run the development server:
+## Features
+
+- **Portfolio**: experience, education, skills, languages, interests and projects, with an English / Uzbek switch
+- **Blog**: Markdown posts with code highlighting, table of contents, reading time and reading progress bar
+- **Admin panel** (`/admin`): create, edit and delete posts, set category, tags and cover image, upload images to Cloudinary
+- **Accounts**: sign up and sign in with email and password (JWT in an httpOnly cookie)
+- **Engagement**: views, likes and comments on every post, plus share by link, Telegram or the native share sheet
+- **Light and dark theme**, saved per browser
+- **SEO**: page metadata, Open Graph previews, `sitemap.xml` and `robots.txt`
+
+## Tech stack
+
+- Next.js 16 (App Router), React 19, TypeScript
+- Tailwind CSS 4, Framer Motion
+- Prisma with SQLite
+- `jose` (JWT), `bcryptjs`
+- `react-markdown`, `remark-gfm`, `rehype-highlight`, `gray-matter`
+- Cloudinary for image uploads
+
+## Getting started
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+git clone https://github.com/Mirzokhidbek/myportfolio.git
+cd myportfolio
+npm install
+cp .env.example .env
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Fill in `.env` (both Next.js and the Prisma CLI read this file):
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+| Variable                   | Required    | Description                                                      |
+| -------------------------- | ----------- | ---------------------------------------------------------------- |
+| `DATABASE_URL`             | Yes         | SQLite path, relative to `prisma/`. Default `file:./data/app.db` |
+| `AUTH_JWT_SECRET`          | Yes         | Secret for login tokens, at least 16 characters                  |
+| `ADMIN_EMAIL`              | Yes         | The account with this email gets the admin role                  |
+| `NEXT_PUBLIC_SITE_URL`     | Yes         | Public site URL, used in the sitemap, robots.txt and previews    |
+| `CLOUDINARY_CLOUD_NAME`    | For uploads | Cloudinary cloud name                                            |
+| `CLOUDINARY_API_KEY`       | For uploads | Cloudinary API key                                               |
+| `CLOUDINARY_API_SECRET`    | For uploads | Cloudinary API secret                                            |
+| `CLOUDINARY_UPLOAD_FOLDER` | No          | Base upload folder. Default `blog`                               |
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Create the database tables and start the dev server:
 
-## Learn More
+```bash
+npx prisma migrate deploy
+npm run dev
+```
 
-To learn more about Next.js, take a look at the following resources:
+Open [http://localhost:3000](http://localhost:3000).
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Admin access
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+1. Set `ADMIN_EMAIL` in `.env`.
+2. Sign up at `/auth/signup` with that email. If the account already exists, signing in again promotes it to admin.
+3. Open `/admin`.
 
-## Daily Blog Posts (Markdown)
+Only admins can open `/admin` and use the admin API. Other signed-in users are sent back to the blog.
 
-Your blog is generated from Markdown files in `content/blog/`.
+## Writing posts
 
-To add a new post, create a new file like `content/blog/2026-03-31-my-post.md` with frontmatter:
+Posts are Markdown files in `content/blog/`. You can write them in the admin panel, or create one from the command line:
+
+```bash
+npm run post:new -- "My post title"
+```
+
+Each file starts with front matter:
 
 ```md
 ---
 title: "My Post Title"
-date: "2026-03-31"
-tags: ["design", "updates"]
+author: "Mirzohid"
+date: "2026-04-10"
+category: "general"
+tags: ["daily", "notes"]
+coverImage: ""
 excerpt: "Short summary shown on the blog list."
 ---
 
 Write your content in Markdown below.
 ```
 
-After you save, your new post automatically appears on `/blog` and opens at `/blog/[slug]`.
+The file name (without `.md`) is the post slug, for example `/blog/2026-04-10-my-post-title`. Files starting with `_` (like `_template.md`) are ignored.
 
-## Blog Admin Panel
+## Image uploads
 
-You can manage posts from UI at `/admin`:
+The admin panel uploads cover and inline images to Cloudinary. Only image files up to 5 MB are accepted, and uploads stay inside `CLOUDINARY_UPLOAD_FOLDER` (for example `blog/covers` and `blog/inline`).
 
-- Create blog posts
-- Edit existing posts
-- Delete posts
-- Set category and cover image
-- Changes appear immediately on `/blog`
+## API
 
-### Admin Login Setup (required)
+| Method             | Path                          | Auth               | Description                                                   |
+| ------------------ | ----------------------------- | ------------------ | ------------------------------------------------------------- |
+| POST               | `/api/auth/signup`            | No                 | Create an account                                             |
+| POST               | `/api/auth/signin`            | No                 | Sign in                                                       |
+| POST               | `/api/auth/logout`            | No                 | Sign out                                                      |
+| GET                | `/api/auth/me`                | No                 | Current user, or `null`                                       |
+| GET                | `/api/posts`                  | No                 | All posts                                                     |
+| GET                | `/api/posts/:slug`            | No                 | One post                                                      |
+| GET, POST          | `/api/posts/:slug/comments`   | POST needs sign in | List or add comments (max 1000 characters)                    |
+| GET, POST          | `/api/posts/:slug/engagement` | Like needs sign in | Stats, or send `{ "action": "view" }` / `{ "action": "like" }` |
+| GET, POST          | `/api/admin/posts`            | Admin              | List or create posts                                          |
+| GET, PATCH, DELETE | `/api/admin/posts/:slug`      | Admin              | Read, update or delete a post                                 |
+| POST               | `/api/admin/uploads/image`    | Admin              | Upload an image                                               |
+| GET                | `/api/admin/users`            | Admin              | List users                                                    |
 
-Create `.env.local` with:
+## Scripts
 
-```bash
-DATABASE_URL="file:./data/app.db"
-ADMIN_EMAIL=your@email.com
-ADMIN_PASSWORD=your_strong_password
-ADMIN_SESSION_SECRET=your_long_random_secret
+| Command            | Description                          |
+| ------------------ | ------------------------------------ |
+| `npm run dev`      | Start the dev server                 |
+| `npm run build`    | Generate the Prisma client and build |
+| `npm start`        | Start the production server          |
+| `npm run lint`     | Run ESLint                           |
+| `npm run post:new` | Create a new Markdown post           |
+
+## Project structure
+
+```
+app/
+├── page.tsx              # Portfolio home page
+├── blog/                 # Blog list and post pages
+├── admin/                # Admin panel
+├── auth/                 # Sign in and sign up pages
+├── api/                  # Route handlers
+├── components/           # Theme toggle, site controls, blog components
+├── sitemap.ts, robots.ts # SEO files
+└── not-found.tsx         # 404 page
+content/blog/             # Markdown posts
+lib/                      # Blog files, auth, Prisma, engagement helpers
+prisma/                   # Schema and migrations
+proxy.ts                  # Protects /admin routes
+scripts/new-post.mjs      # Post generator
 ```
 
-- Open `/admin/login` and sign in with your credentials.
-- Only logged-in sessions can access `/admin` and publish posts.
+## Deploying
 
-> In production, do not commit `.env.local`. Instead set `DATABASE_URL`, `ADMIN_EMAIL`, `ADMIN_PASSWORD`, and `ADMIN_SESSION_SECRET` in your host provider's environment settings.
+Set every variable from `.env.example` in your host's environment settings, and never commit `.env`.
 
-## Engagement Features
-
-Each blog post supports:
-
-- Comments (`/api/posts/[slug]/comments`)
-- View counter (`/api/posts/[slug]/engagement`, action: `view`)
-- Like button (`/api/posts/[slug]/engagement`, action: `like`)
-- Share actions on the post page
-
-## Cloudinary Setup (required for images)
-
-Add these to `.env.local`:
-
-```bash
-CLOUDINARY_CLOUD_NAME=your_cloud_name
-CLOUDINARY_API_KEY=your_api_key
-CLOUDINARY_API_SECRET=your_api_secret
-# optional
-CLOUDINARY_UPLOAD_FOLDER=blog
-```
-
-- Cover image upload in the admin panel uses Cloudinary.
-- Inline image upload inserts `![](url)` markdown using the returned Cloudinary URL.
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Posts are saved as files and data is stored in SQLite, so the app needs a host with a persistent, writable disk. Serverless hosts such as Vercel do not keep file changes, so there the admin panel can't save posts and likes and comments won't persist.
