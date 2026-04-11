@@ -19,7 +19,7 @@ export default function ReadingProgress() {
   }, []);
 
   return (
-    <div className="fixed top-0 left-0 right-0 z-50 h-1 pointer-events-none bg-slate-200/80 dark:bg-white/5">
+    <div className="fixed top-12 left-0 right-0 z-50 h-1 pointer-events-none bg-slate-200/80 dark:bg-white/5">
       <div
         className="h-full bg-emerald-500 origin-left transition-transform"
         style={{ transform: `scaleX(${progress})` }}
