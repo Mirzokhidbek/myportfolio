@@ -9,26 +9,26 @@ const PAGE_SIZE = 6;
 export default async function BlogPage({
   searchParams,
 }: {
-  searchParams?: Record<string, string | string[] | undefined>;
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
 }) {
-  const [posts, session] = await Promise.all([getAllPosts(), getSession()]);
+  const [posts, session, params] = await Promise.all([getAllPosts(), getSession(), searchParams]);
   const isAdmin = session?.role === "ADMIN";
 
-  const pageRaw = typeof searchParams?.page === "string" ? searchParams.page : "1";
+  const pageRaw = typeof params.page === "string" ? params.page : "1";
   const page = Math.max(1, parseInt(pageRaw, 10) || 1);
 
   const q =
-    typeof searchParams?.q === "string" ? searchParams.q.trim() : "";
+    typeof params.q === "string" ? params.q.trim() : "";
   const tag =
-    typeof searchParams?.tag === "string"
-      ? searchParams.tag.trim().toLowerCase()
+    typeof params.tag === "string"
+      ? params.tag.trim().toLowerCase()
       : "";
   const category =
-    typeof searchParams?.category === "string"
-      ? searchParams.category.trim().toLowerCase()
+    typeof params.category === "string"
+      ? params.category.trim().toLowerCase()
       : "";
   const notice =
-    typeof searchParams?.notice === "string" ? searchParams.notice : "";
+    typeof params.notice === "string" ? params.notice : "";
 
   const filteredAll = posts.filter((p) => {
     const matchesTag = tag ? p.tags.includes(tag) : true;
