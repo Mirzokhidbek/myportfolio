@@ -1,10 +1,10 @@
 import { redirect } from "next/navigation";
 
-export default function EditPostRoute({
+export default async function EditPostRoute({
   params,
 }: {
-  params: { slug: string };
+  params: Promise<{ slug: string }>;
 }) {
-  redirect(`/admin?edit=${encodeURIComponent(params.slug)}`);
+  const { slug } = await params;
+  redirect(`/admin?edit=${encodeURIComponent(slug)}`);
 }
-
