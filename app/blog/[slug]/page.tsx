@@ -147,20 +147,16 @@ export default async function BlogPostPage({
             ) : null}
           </article>
 
-          <aside className="lg:sticky top-8 h-fit space-y-6">
-            <section className="rounded-3xl bg-white/90 dark:bg-white/5 border border-slate-200 dark:border-white/10 p-5">
-              <h2 className="text-sm font-semibold text-slate-900 dark:text-zinc-100">
-                Table of contents
-              </h2>
-              <p className="text-xs text-slate-500 dark:text-zinc-500 mt-1">
-                Jump to sections in this post.
-              </p>
+          <aside className="lg:sticky top-16 h-fit space-y-6">
+            {headings.length > 0 ? (
+              <section className="rounded-3xl bg-white/90 dark:bg-white/5 border border-slate-200 dark:border-white/10 p-5">
+                <h2 className="text-sm font-semibold text-slate-900 dark:text-zinc-100">
+                  Table of contents
+                </h2>
+                <p className="text-xs text-slate-500 dark:text-zinc-500 mt-1">
+                  Jump to sections in this post.
+                </p>
 
-              {headings.length === 0 ? (
-                <div className="mt-4 text-sm text-slate-500 dark:text-zinc-500">
-                  No headings found (use `##`, `###`, `####`).
-                </div>
-              ) : (
                 <ul className="mt-4 space-y-2">
                   {headings.map((h, idx) => (
                     <li key={`${h.id}-${idx}`}>
@@ -180,8 +176,8 @@ export default async function BlogPostPage({
                     </li>
                   ))}
                 </ul>
-              )}
-            </section>
+              </section>
+            ) : null}
 
             <section className="rounded-3xl bg-white/90 dark:bg-white/5 border border-slate-200 dark:border-white/10 p-5">
               <h2 className="text-sm font-semibold text-slate-900 dark:text-zinc-100">
