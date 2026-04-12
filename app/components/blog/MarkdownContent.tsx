@@ -86,9 +86,9 @@ export default function MarkdownContent({ content }: { content: string }) {
     ),
     code: (props) => {
       const { className, children } = props;
-      // react-markdown's TS types don't always expose `inline`; use a safe runtime check.
-      const maybeInline = (props as { inline?: unknown }).inline;
-      const isInline = typeof maybeInline === "boolean" ? maybeInline : false;
+      // react-markdown v10 has no `inline` flag: fenced blocks carry a language
+      // class or span several lines, everything else is inline code.
+      const isInline = !/language-/.test(className ?? "") && !String(children).includes("\n");
 
       const languageMatch = /language-(\w+)/.exec(className ?? "");
       const language = languageMatch?.[1];
