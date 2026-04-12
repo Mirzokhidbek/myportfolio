@@ -5,6 +5,13 @@ import rehypeHighlight from "rehype-highlight";
 
 import type { Components } from "react-markdown";
 
+/** react-markdown passes its AST `node` to components; keep it off DOM elements. */
+function domProps<T extends { node?: unknown }>(props: T) {
+  const { node, ...rest } = props;
+  void node;
+  return rest;
+}
+
 export default function MarkdownContent({ content }: { content: string }) {
   const components: Components = {
     h1: ({ children }) => (
@@ -15,7 +22,7 @@ export default function MarkdownContent({ content }: { content: string }) {
     h2: ({ children, ...props }) => (
       <h2
         className="mt-10 mb-4 text-2xl font-semibold tracking-tight scroll-mt-24"
-        {...props}
+        {...domProps(props)}
       >
         {children}
       </h2>
@@ -23,7 +30,7 @@ export default function MarkdownContent({ content }: { content: string }) {
     h3: ({ children, ...props }) => (
       <h3
         className="mt-8 mb-3 text-xl font-semibold tracking-tight scroll-mt-24"
-        {...props}
+        {...domProps(props)}
       >
         {children}
       </h3>
@@ -40,7 +47,7 @@ export default function MarkdownContent({ content }: { content: string }) {
           {...(isExternal
             ? { target: "_blank", rel: "noreferrer" }
             : undefined)}
-          {...props}
+          {...domProps(props)}
         >
           {children}
         </a>
@@ -105,7 +112,7 @@ export default function MarkdownContent({ content }: { content: string }) {
         <code
           className="block text-sm leading-relaxed text-slate-800 dark:text-zinc-100"
           data-language={language}
-          {...props}
+          {...domProps(props)}
         >
           {children}
         </code>
