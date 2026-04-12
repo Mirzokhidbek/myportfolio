@@ -39,7 +39,8 @@ export default function MarkdownContent({ content }: { content: string }) {
       <p className="mt-5 leading-relaxed text-slate-700 dark:text-zinc-200">{children}</p>
     ),
     a: ({ href, children, ...props }) => {
-      const isExternal = typeof href === "string" && !href.startsWith("/");
+      // Only links to other sites open in a new tab; "#section" and "/path" stay here.
+      const isExternal = typeof href === "string" && /^https?:\/\//.test(href);
       return (
         <a
           href={href}
