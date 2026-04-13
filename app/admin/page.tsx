@@ -47,6 +47,7 @@ export default function AdminPage() {
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
   const [createdUrl, setCreatedUrl] = useState("");
+  const [resultAction, setResultAction] = useState<"created" | "updated">("created");
   const [loggingOut, setLoggingOut] = useState(false);
   const [posts, setPosts] = useState<AdminPost[]>([]);
   const [loadingPosts, setLoadingPosts] = useState(true);
@@ -120,6 +121,7 @@ export default function AdminPage() {
         return;
       }
 
+      setResultAction("created");
       setCreatedUrl(data.url);
       setTitle("");
       setExcerpt("");
@@ -229,6 +231,7 @@ export default function AdminPage() {
         return;
       }
       setEditingSlug(null);
+      setResultAction("updated");
       setCreatedUrl(`/blog/${editingSlug}`);
       await loadPosts();
     } catch {
@@ -595,7 +598,7 @@ export default function AdminPage() {
 
           {createdUrl ? (
             <div className="rounded-xl border border-emerald-500/40 bg-emerald-500/10 p-3 text-sm text-emerald-900 dark:text-emerald-200">
-              Post created successfully:{" "}
+              {resultAction === "updated" ? "Post updated:" : "Post created successfully:"}{" "}
               <Link href={createdUrl} className="underline">
                 {createdUrl}
               </Link>
