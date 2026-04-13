@@ -90,6 +90,11 @@ export default function AdminPage() {
 
   async function onSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
+    // Pressing Enter while editing must save the post, not publish a copy.
+    if (editingSlug) {
+      await saveEdit();
+      return;
+    }
     setSubmitting(true);
     setError("");
     setCreatedUrl("");
@@ -599,8 +604,7 @@ export default function AdminPage() {
 
           {editingSlug ? (
             <button
-              type="button"
-              onClick={saveEdit}
+              type="submit"
               disabled={submitting}
               className="rounded-2xl bg-cyan-400 px-5 py-3 text-black font-medium hover:bg-cyan-300 disabled:opacity-60 transition"
             >
