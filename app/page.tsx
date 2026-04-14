@@ -287,7 +287,7 @@ export default function Home() {
                       GitHub
                     </a>
                     <span className="text-slate-600">·</span>
-                    <a href={project.demo} target="_blank" rel="noreferrer" className="text-cyan-300 hover:text-cyan-100">
+                    <a href={project.demo} target="_blank" rel="noreferrer" className="text-cyan-700 hover:text-cyan-900 dark:text-cyan-300 dark:hover:text-cyan-100">
                       Live Demo
                     </a>
                   </div>

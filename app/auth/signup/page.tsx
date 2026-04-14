@@ -82,7 +82,7 @@ export default function SignUpPage() {
           </label>
 
           {error ? (
-            <div className="rounded-xl border border-red-500/40 bg-red-500/10 p-3 text-sm text-red-200">
+            <div className="rounded-xl border border-red-500/40 bg-red-500/10 p-3 text-sm text-red-700 dark:text-red-200">
               {error}
             </div>
           ) : null}

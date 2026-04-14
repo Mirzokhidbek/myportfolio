@@ -120,7 +120,7 @@ export default function PostInteractions({
       </div>
       <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-2">
         {likeError ? (
-          <p className="text-xs text-red-300 sm:order-last sm:w-full">{likeError}</p>
+          <p className="text-xs text-red-600 dark:text-red-300 sm:order-last sm:w-full">{likeError}</p>
         ) : null}
         <div className="flex flex-wrap items-center gap-2">
           {userId ? (
