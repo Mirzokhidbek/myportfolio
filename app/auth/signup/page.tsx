@@ -53,6 +53,7 @@ export default function SignUpPage() {
               onChange={(e) => setName(e.target.value)}
               className="mt-2 w-full rounded-xl border border-slate-300 bg-white text-slate-900 dark:border-white/10 dark:bg-black/30 dark:text-white px-3 py-2 outline-none focus:ring-2 focus:ring-emerald-500/40"
               autoComplete="name"
+              maxLength={60}
               required
             />
           </label>
@@ -61,6 +62,7 @@ export default function SignUpPage() {
             <span className="text-sm text-slate-600 dark:text-zinc-300">Email</span>
             <input
               value={email}
+              type="email"
               onChange={(e) => setEmail(e.target.value)}
               className="mt-2 w-full rounded-xl border border-slate-300 bg-white text-slate-900 dark:border-white/10 dark:bg-black/30 dark:text-white px-3 py-2 outline-none focus:ring-2 focus:ring-emerald-500/40"
               autoComplete="email"
@@ -69,7 +71,7 @@ export default function SignUpPage() {
           </label>
 
           <label className="block">
-            <span className="text-sm text-slate-600 dark:text-zinc-300">Password (8+ characters)</span>
+            <span className="text-sm text-slate-600 dark:text-zinc-300">Password (8–72 characters)</span>
             <input
               type="password"
               value={password}
@@ -78,6 +80,7 @@ export default function SignUpPage() {
               autoComplete="new-password"
               required
               minLength={8}
+              maxLength={72}
             />
           </label>
 
