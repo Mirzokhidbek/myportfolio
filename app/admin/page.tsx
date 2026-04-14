@@ -372,7 +372,7 @@ export default function AdminPage() {
               type="button"
               onClick={onLogout}
               disabled={loggingOut}
-              className="text-left text-red-300 hover:text-red-200 disabled:opacity-60 transition"
+              className="text-left text-red-600 hover:text-red-700 dark:text-red-300 dark:hover:text-red-200 disabled:opacity-60 transition"
             >
               {loggingOut ? "Logging out..." : "Logout"}
             </button>
@@ -592,7 +592,7 @@ export default function AdminPage() {
           </label>
 
           {error ? (
-            <div className="rounded-xl border border-red-500/40 bg-red-500/10 p-3 text-sm text-red-200">
+            <div className="rounded-xl border border-red-500/40 bg-red-500/10 p-3 text-sm text-red-700 dark:text-red-200">
               {error}
             </div>
           ) : null}
@@ -647,13 +647,13 @@ export default function AdminPage() {
                   <div className="flex items-center gap-2">
                     <button
                       onClick={() => startEdit(post.slug)}
-                      className="px-3 py-1.5 rounded-lg border border-cyan-400/40 text-cyan-200 hover:bg-cyan-400/10 text-sm"
+                      className="px-3 py-1.5 rounded-lg border border-cyan-400/40 text-cyan-700 dark:text-cyan-200 hover:bg-cyan-400/10 text-sm"
                     >
                       Edit
                     </button>
                     <button
                       onClick={() => onDelete(post.slug)}
-                      className="px-3 py-1.5 rounded-lg border border-red-400/40 text-red-200 hover:bg-red-400/10 text-sm"
+                      className="px-3 py-1.5 rounded-lg border border-red-400/40 text-red-700 dark:text-red-200 hover:bg-red-400/10 text-sm"
                     >
                       Delete
                     </button>
