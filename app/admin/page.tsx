@@ -191,6 +191,8 @@ export default function AdminPage() {
       return;
     }
     const post = data.post as AdminPost & { content: string };
+    setError("");
+    setCreatedUrl("");
     setEditingSlug(slug);
     setTitle(post.title);
     setDate(post.date);
@@ -205,6 +207,7 @@ export default function AdminPage() {
     setInlineFile(null);
     setInlineImageUrl("");
     setInlineUploading(false);
+    document.getElementById("post-form")?.scrollIntoView({ behavior: "smooth", block: "start" });
   }
 
   async function saveEdit() {
@@ -249,6 +252,7 @@ export default function AdminPage() {
       setError(data.error ?? "Failed to delete.");
       return;
     }
+    if (slug === editingSlug) clearForm();
     await loadPosts();
   }
 
@@ -380,6 +384,7 @@ export default function AdminPage() {
         </header>
 
         <form
+          id="post-form"
           onSubmit={onSubmit}
           className="rounded-3xl border border-slate-200 dark:border-white/10 bg-white/95 dark:bg-white/5 p-6 md:p-8 space-y-5"
         >
