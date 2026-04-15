@@ -44,8 +44,7 @@ export default function SignUpForm() {
     <>
       <h1 className="text-3xl font-semibold tracking-tight">Create account</h1>
       <p className="text-slate-600 dark:text-zinc-300 mt-2 text-sm">
-        Use a strong password. The email in your server{" "}
-        <code className="text-slate-800 dark:text-zinc-200">ADMIN_EMAIL</code> becomes an admin automatically.
+        Sign up to like posts and join the comments.
       </p>
 
       <form onSubmit={onSubmit} className="mt-6 space-y-4">
