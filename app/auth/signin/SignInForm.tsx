@@ -89,7 +89,7 @@ export default function SignInForm() {
 
       <p className="mt-5 text-sm text-slate-500 dark:text-zinc-400">
         No account?{" "}
-        <Link href="/auth/signup" className="text-emerald-700 hover:text-emerald-900 dark:text-emerald-300 dark:hover:text-emerald-200">
+        <Link href={`/auth/signup?next=${encodeURIComponent(nextPath)}`} className="text-emerald-700 hover:text-emerald-900 dark:text-emerald-300 dark:hover:text-emerald-200">
           Create one
         </Link>
       </p>
