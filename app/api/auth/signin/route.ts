@@ -5,6 +5,9 @@ import { syncAdminRoleFromEnv } from "@/lib/user-role";
 import { signAuthToken, AUTH_COOKIE } from "@/lib/auth-token";
 import { authCookieOptions } from "@/lib/auth-cookie";
 
+// Compared against when the email is unknown, so both cases take about the same time.
+const DUMMY_HASH = bcrypt.hashSync("not-a-real-password", 12);
+
 type Body = {
   email?: string;
   password?: string;
@@ -21,12 +24,8 @@ export async function POST(req: Request) {
     }
 
     const user = await prisma.user.findUnique({ where: { email } });
-    if (!user) {
-      return NextResponse.json({ ok: false, error: "Invalid email or password." }, { status: 401 });
-    }
-
-    const ok = await bcrypt.compare(password, user.passwordHash);
-    if (!ok) {
+    const ok = await bcrypt.compare(password, user?.passwordHash ?? DUMMY_HASH);
+    if (!user || !ok) {
       return NextResponse.json({ ok: false, error: "Invalid email or password." }, { status: 401 });
     }
 
