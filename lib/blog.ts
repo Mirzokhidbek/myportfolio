@@ -1,3 +1,4 @@
+import { cache } from "react";
 import fs from "fs/promises";
 import path from "path";
 import matter from "gray-matter";
@@ -127,7 +128,8 @@ export async function getAllPosts(): Promise<BlogPostListItem[]> {
   return posts;
 }
 
-export async function getPostBySlug(slug: string): Promise<BlogPost | null> {
+// Wrapped in cache() so generateMetadata and the page share one file read per request.
+export const getPostBySlug = cache(async (slug: string): Promise<BlogPost | null> => {
   if (!isValidSlug(slug)) return null;
   const filePath = path.join(BLOG_DIR, `${slug}.md`);
 
@@ -138,4 +140,4 @@ export async function getPostBySlug(slug: string): Promise<BlogPost | null> {
   } catch {
     return null;
   }
-}
+});
