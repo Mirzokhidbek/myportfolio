@@ -78,12 +78,18 @@ export async function toggleLike(slug: string, userId: string) {
     },
   });
 
+  // Fast double clicks can race; treat "already liked" / "already removed" as success.
   if (existing) {
-    await prisma.like.delete({ where: { id: existing.id } });
+    await prisma.like.deleteMany({ where: { postSlug: slug, userId } });
   } else {
-    await prisma.like.create({
-      data: { postSlug: slug, userId },
-    });
+    try {
+      await prisma.like.create({
+        data: { postSlug: slug, userId },
+      });
+    } catch (error) {
+      const code = typeof error === "object" && error && "code" in error ? String(error.code) : "";
+      if (code !== "P2002") throw error;
+    }
   }
 
   const liked = !existing;
