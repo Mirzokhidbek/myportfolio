@@ -63,7 +63,9 @@ export default function CommentsSection({ slug }: { slug: string }) {
 
   return (
     <section className="rounded-3xl border border-slate-200 bg-white/90 dark:border-white/10 dark:bg-white/5 p-6 md:p-8">
-      <h2 className="text-xl font-semibold">Comments</h2>
+      <h2 className="text-xl font-semibold">
+        Comments{items.length > 0 ? ` (${items.length})` : ""}
+      </h2>
       <p className="text-sm text-slate-500 dark:text-zinc-400 mt-1">
         Anyone can read comments. Signing in is required to post.
       </p>
@@ -79,6 +81,7 @@ export default function CommentsSection({ slug }: { slug: string }) {
             className="w-full min-h-[110px] rounded-xl border border-slate-300 bg-white text-slate-900 placeholder:text-slate-400 dark:border-white/10 dark:bg-black/30 dark:text-white dark:placeholder:text-zinc-500 px-3 py-2 outline-none focus:ring-2 focus:ring-emerald-500/40"
             required
           />
+          <p className="text-right text-xs text-slate-500 dark:text-zinc-500">{message.length}/1000</p>
           {error ? <p className="text-sm text-red-600 dark:text-red-300">{error}</p> : null}
           <button
             type="submit"
