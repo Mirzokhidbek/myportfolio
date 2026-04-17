@@ -7,9 +7,12 @@ export type PublicComment = {
   name: string;
   message: string;
   createdAt: string;
+  canDelete: boolean;
 };
 
-export async function getComments(slug: string): Promise<PublicComment[]> {
+type Viewer = { sub: string; role: "ADMIN" | "USER" } | null;
+
+export async function getComments(slug: string, viewer: Viewer = null): Promise<PublicComment[]> {
   const rows = await prisma.comment.findMany({
     where: { postSlug: slug },
     orderBy: { createdAt: "asc" },
@@ -20,7 +23,17 @@ export async function getComments(slug: string): Promise<PublicComment[]> {
     name: c.user.name,
     message: c.message,
     createdAt: c.createdAt.toISOString(),
+    canDelete: Boolean(viewer && (viewer.role === "ADMIN" || viewer.sub === c.userId)),
   }));
+}
+
+/** Authors can delete their own comments; admins can delete any. Returns false if not allowed or missing. */
+export async function deleteComment(slug: string, commentId: string, viewer: NonNullable<Viewer>) {
+  const comment = await prisma.comment.findUnique({ where: { id: commentId } });
+  if (!comment || comment.postSlug !== slug) return false;
+  if (viewer.role !== "ADMIN" && comment.userId !== viewer.sub) return false;
+  await prisma.comment.delete({ where: { id: commentId } });
+  return true;
 }
 
 export async function addComment(slug: string, userId: string, message: string) {
