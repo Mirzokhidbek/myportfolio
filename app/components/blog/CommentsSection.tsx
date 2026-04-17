@@ -115,7 +115,7 @@ export default function CommentsSection({ slug }: { slug: string }) {
                   {new Date(item.createdAt).toLocaleString()}
                 </p>
               </div>
-              <p className="text-sm text-slate-600 dark:text-zinc-300 mt-2">{item.message}</p>
+              <p className="text-sm text-slate-600 dark:text-zinc-300 mt-2 whitespace-pre-line break-words">{item.message}</p>
             </div>
           ))
         )}
