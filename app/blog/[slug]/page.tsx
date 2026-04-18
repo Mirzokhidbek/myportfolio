@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 
 import { getAllPosts, getPostBySlug, extractHeadings } from "@/lib/blog";
+import { formatPostDate } from "@/lib/format-date";
 import ReadingProgress from "@/app/components/blog/ReadingProgress";
 import MarkdownContent from "@/app/components/blog/MarkdownContent";
 import PostInteractions from "@/app/components/blog/PostInteractions";
@@ -73,7 +74,7 @@ export default async function BlogPostPage({
               </h1>
 
               <div className="mt-4 flex flex-wrap items-center gap-x-3 gap-y-2 text-sm text-slate-600 dark:text-zinc-300">
-                <span>{post.date}</span>
+                <time dateTime={post.date}>{formatPostDate(post.date)}</time>
                 <span className="opacity-40">·</span>
                 <span>By {post.author}</span>
                 <span className="opacity-40">·</span>
@@ -133,7 +134,7 @@ export default async function BlogPostPage({
                             {p.title}
                           </div>
                           <div className="mt-1 text-xs text-slate-500 dark:text-zinc-500">
-                            {p.date} · {p.readingTimeMinutes} min read
+                            {formatPostDate(p.date)} · {p.readingTimeMinutes} min read
                           </div>
                         </div>
                         <div className="text-sm text-emerald-700 dark:text-emerald-300 shrink-0">

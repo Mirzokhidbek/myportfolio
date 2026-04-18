@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { getAllPosts } from "@/lib/blog";
 import { getSession } from "@/lib/session";
+import { formatPostDate } from "@/lib/format-date";
 
 export const dynamic = "force-dynamic";
 
@@ -188,7 +189,7 @@ export default async function BlogPage({
                       {post.title}
                     </h2>
                     <p className="mt-2 text-slate-600 dark:text-zinc-300 text-sm">
-                      {post.date} · {post.author} · {post.category} · {post.readingTimeMinutes} min read
+                      {formatPostDate(post.date)} · {post.author} · {post.category} · {post.readingTimeMinutes} min read
                     </p>
                     <p className="mt-4 text-slate-700 dark:text-zinc-200">
                       {post.excerpt}
