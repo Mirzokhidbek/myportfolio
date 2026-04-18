@@ -8,6 +8,7 @@ type CommentItem = {
   name: string;
   message: string;
   createdAt: string;
+  canDelete: boolean;
 };
 
 export default function CommentsSection({ slug }: { slug: string }) {
@@ -59,6 +60,20 @@ export default function CommentsSection({ slug }: { slug: string }) {
     } finally {
       setSubmitting(false);
     }
+  }
+
+  async function onDelete(id: string) {
+    if (!confirm("Delete this comment?")) return;
+    setError("");
+    const res = await fetch(`/api/posts/${slug}/comments?id=${encodeURIComponent(id)}`, {
+      method: "DELETE",
+    });
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok || !data.ok) {
+      setError(data.error ?? "Failed to delete comment.");
+      return;
+    }
+    setItems((current) => current.filter((item) => item.id !== id));
   }
 
   return (
@@ -114,9 +129,20 @@ export default function CommentsSection({ slug }: { slug: string }) {
             >
               <div className="flex items-center justify-between gap-4">
                 <p className="font-medium text-sm">{item.name}</p>
-                <p className="text-xs text-slate-500 dark:text-zinc-500">
-                  {new Date(item.createdAt).toLocaleString()}
-                </p>
+                <div className="flex items-center gap-3">
+                  <p className="text-xs text-slate-500 dark:text-zinc-500">
+                    {new Date(item.createdAt).toLocaleString()}
+                  </p>
+                  {item.canDelete ? (
+                    <button
+                      type="button"
+                      onClick={() => onDelete(item.id)}
+                      className="text-xs text-red-600 hover:text-red-700 dark:text-red-300 dark:hover:text-red-200 transition"
+                    >
+                      Delete
+                    </button>
+                  ) : null}
+                </div>
               </div>
               <p className="text-sm text-slate-600 dark:text-zinc-300 mt-2 whitespace-pre-line break-words">{item.message}</p>
             </div>
