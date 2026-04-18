@@ -159,6 +159,20 @@ export default async function BlogPage({
           </div>
         </header>
 
+        {q || tag || category ? (
+          <div className="mb-4 flex items-center justify-between gap-4 text-sm text-slate-600 dark:text-zinc-300">
+            <span>
+              {filteredAll.length} {filteredAll.length === 1 ? "post" : "posts"} found
+            </span>
+            <Link
+              href="/blog"
+              className="text-emerald-700 hover:text-emerald-900 dark:text-emerald-300 dark:hover:text-emerald-200 transition"
+            >
+              Clear filters
+            </Link>
+          </div>
+        ) : null}
+
         {filteredAll.length === 0 ? (
           <div className="text-slate-600 dark:text-zinc-300 bg-white/90 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-3xl p-8">
             No posts found. Try a different search or tag.
