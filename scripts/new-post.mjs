@@ -10,6 +10,10 @@ function slugify(text) {
     .replace(/-+/g, "-");
 }
 
+function yamlString(value) {
+  return `"${value.replace(/\\/g, "\\\\").replace(/"/g, '\\"')}"`;
+}
+
 function formatDate(date) {
   const y = date.getFullYear();
   const m = String(date.getMonth() + 1).padStart(2, "0");
@@ -28,10 +32,12 @@ async function main() {
   const filePath = path.join(blogDir, `${slug}.md`);
 
   const template = `---
-title: "${title}"
-author: "Your Name"
+title: ${yamlString(title)}
+author: "Mirzohid"
 date: "${date}"
+category: "general"
 tags: ["daily", "notes"]
+coverImage: ""
 excerpt: "Write a one-line summary for this post."
 ---
 
