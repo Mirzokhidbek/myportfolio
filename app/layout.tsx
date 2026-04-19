@@ -35,6 +35,9 @@ export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: "Mirzohid | Portfolio + Blog",
   description: "A portfolio and blog project featuring design work, case studies, and articles.",
+  alternates: {
+    types: { "application/rss+xml": "/blog/rss.xml" },
+  },
 };
 
 export default function RootLayout({

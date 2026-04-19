@@ -76,12 +76,20 @@ export default async function BlogPage({
               </p>
             </div>
 
-            <Link
-              href="/"
-              className="text-sm text-slate-600 hover:text-slate-900 dark:text-zinc-200 dark:hover:text-white transition"
-            >
-              ← Back to portfolio
-            </Link>
+            <div className="flex flex-col items-end gap-2 text-sm">
+              <Link
+                href="/"
+                className="text-slate-600 hover:text-slate-900 dark:text-zinc-200 dark:hover:text-white transition"
+              >
+                ← Back to portfolio
+              </Link>
+              <a
+                href="/blog/rss.xml"
+                className="text-emerald-700 hover:text-emerald-900 dark:text-emerald-300 dark:hover:text-emerald-200 transition"
+              >
+                RSS feed
+              </a>
+            </div>
           </div>
 
           {isAdmin ? (
