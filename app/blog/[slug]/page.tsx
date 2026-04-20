@@ -96,6 +96,13 @@ export default async function BlogPostPage({
                 <span className="opacity-40">·</span>
                 <span>By {post.author}</span>
                 <span className="opacity-40">·</span>
+                <Link
+                  href={`/blog?category=${encodeURIComponent(post.category)}`}
+                  className="capitalize hover:text-emerald-700 dark:hover:text-emerald-300 transition"
+                >
+                  {post.category}
+                </Link>
+                <span className="opacity-40">·</span>
                 <span>{post.readingTimeMinutes} min read</span>
               </div>
 
