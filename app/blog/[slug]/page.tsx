@@ -23,6 +23,11 @@ export async function generateMetadata({
   return {
     title: `${post.title} | Blog`,
     description: post.excerpt,
+    // Replaces the layout's alternates, so keep the RSS link here too.
+    alternates: {
+      canonical: `/blog/${post.slug}`,
+      types: { "application/rss+xml": "/blog/rss.xml" },
+    },
     openGraph: {
       title: post.title,
       description: post.excerpt,
