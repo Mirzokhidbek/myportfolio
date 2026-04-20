@@ -4,6 +4,7 @@ import type { Metadata } from "next";
 
 import { getAllPosts, getPostBySlug, extractHeadings } from "@/lib/blog";
 import { formatPostDate } from "@/lib/format-date";
+import { SITE_URL } from "@/lib/site";
 import ReadingProgress from "@/app/components/blog/ReadingProgress";
 import MarkdownContent from "@/app/components/blog/MarkdownContent";
 import PostInteractions from "@/app/components/blog/PostInteractions";
@@ -46,8 +47,25 @@ export default async function BlogPostPage({
 
   const headings = extractHeadings(post.content);
 
+  // Structured data so search engines can show the post as an article.
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "BlogPosting",
+    headline: post.title,
+    description: post.excerpt,
+    datePublished: post.date,
+    author: { "@type": "Person", name: post.author },
+    url: `${SITE_URL}/blog/${post.slug}`,
+    ...(post.coverImage ? { image: post.coverImage } : {}),
+    keywords: post.tags.join(", "),
+  };
+
   return (
     <main className="min-h-screen bg-gradient-to-b from-slate-50 via-white to-slate-100 text-slate-900 dark:from-black dark:via-[#070a0a] dark:to-black dark:text-white px-6 py-10">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd).replace(/</g, "\\u003c") }}
+      />
       <ReadingProgress />
 
       <div id="top" className="max-w-6xl mx-auto">
