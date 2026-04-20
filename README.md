@@ -5,12 +5,12 @@ Personal portfolio and blog built with Next.js. The home page shows experience, 
 ## Features
 
 - **Portfolio**: experience, education, skills, languages, interests and projects, with an English / Uzbek switch
-- **Blog**: Markdown posts with code highlighting, table of contents, reading time and reading progress bar
+- **Blog**: Markdown posts with code highlighting, table of contents, reading time, reading progress bar, search, tag and category filters, and an RSS feed (`/blog/rss.xml`)
 - **Admin panel** (`/admin`): create, edit and delete posts, set category, tags and cover image, upload images to Cloudinary
 - **Accounts**: sign up and sign in with email and password (JWT in an httpOnly cookie)
-- **Engagement**: views, likes and comments on every post, plus share by link, Telegram or the native share sheet
+- **Engagement**: views (counted once per day per browser), likes and comments on every post, plus share by link, Telegram or the native share sheet. Readers can delete their own comments, and admins can delete any comment
 - **Light and dark theme**, saved per browser
-- **SEO**: page metadata, Open Graph previews, `sitemap.xml` and `robots.txt`
+- **SEO**: page metadata, Open Graph previews, canonical URLs, article structured data (JSON-LD), `sitemap.xml`, `robots.txt` and RSS
 
 ## Tech stack
 
@@ -100,7 +100,7 @@ The admin panel uploads cover and inline images to Cloudinary. Only image files 
 | GET                | `/api/auth/me`                | No                 | Current user, or `null`                                       |
 | GET                | `/api/posts`                  | No                 | All posts                                                     |
 | GET                | `/api/posts/:slug`            | No                 | One post                                                      |
-| GET, POST          | `/api/posts/:slug/comments`   | POST needs sign in | List or add comments (max 1000 characters)                    |
+| GET, POST, DELETE  | `/api/posts/:slug/comments`   | POST/DELETE need sign in | List, add (max 1000 characters) or delete (`?id=`) comments |
 | GET, POST          | `/api/posts/:slug/engagement` | Like needs sign in | Stats, or send `{ "action": "view" }` / `{ "action": "like" }` |
 | GET, POST          | `/api/admin/posts`            | Admin              | List or create posts                                          |
 | GET, PATCH, DELETE | `/api/admin/posts/:slug`      | Admin              | Read, update or delete a post                                 |
@@ -128,6 +128,7 @@ app/
 ├── api/                  # Route handlers
 ├── components/           # Theme toggle, site controls, blog components
 ├── sitemap.ts, robots.ts # SEO files
+├── blog/rss.xml/         # RSS feed
 └── not-found.tsx         # 404 page
 content/blog/             # Markdown posts
 lib/                      # Blog files, auth, Prisma, engagement helpers
