@@ -145,7 +145,8 @@ export async function getAllPosts(): Promise<BlogPostListItem[]> {
     posts.push(parsePost(slug, raw, 140).item);
   }
 
-  posts.sort((a, b) => (a.date < b.date ? 1 : -1));
+  // Newest first; posts from the same day keep a stable order by title.
+  posts.sort((a, b) => b.date.localeCompare(a.date) || a.title.localeCompare(b.title));
   return posts;
 }
 
