@@ -40,6 +40,18 @@ function estimateReadingTimeMinutes(markdown: string) {
   return Math.max(1, Math.round(words / 200));
 }
 
+/** Plain text from markdown, used when a post has no excerpt in its front matter. */
+function markdownToPlainText(markdown: string) {
+  return markdown
+    .replace(/```[\s\S]*?```/g, " ")
+    .replace(/!\[[^\]]*\]\([^)]*\)/g, " ")
+    .replace(/\[([^\]]+)\]\([^)]*\)/g, "$1")
+    .replace(/^\s{0,3}(#{1,6}|>|[-*+]|\d+\.)\s+/gm, "")
+    .replace(/[*_~`]+/g, "")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
 function normalizeTag(tag: string) {
   return tag.trim().toLowerCase();
 }
@@ -93,7 +105,7 @@ function parsePost(slug: string, raw: string, excerptLength: number) {
   const coverImage = String(parsed.data.coverImage ?? "").trim();
   const excerpt =
     String(parsed.data.excerpt ?? "").trim() ||
-    String(parsed.content.trim().slice(0, excerptLength));
+    markdownToPlainText(parsed.content).slice(0, excerptLength);
 
   const item: BlogPostListItem = {
     slug,
