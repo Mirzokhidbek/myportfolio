@@ -56,7 +56,16 @@ export function extractHeadings(markdown: string) {
     level: 2 | 3 | 4;
   }> = [];
 
+  let inCodeFence = false;
+
   for (const line of lines) {
+    // Lines inside ``` or ~~~ blocks are code, not headings.
+    if (/^\s*(```|~~~)/.test(line)) {
+      inCodeFence = !inCodeFence;
+      continue;
+    }
+    if (inCodeFence) continue;
+
     const match = /^(#{2,4})\s+(.+?)\s*$/.exec(line);
     if (!match) continue;
 
