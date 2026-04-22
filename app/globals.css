@@ -3,10 +3,13 @@
 /* `dark:` utilities follow the theme toggle state, not only OS preference */
 @custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
 
+/* Light values are the default, so the page looks right even before data-theme is set. */
 :root {
   color-scheme: light;
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #f8fafc;
+  --foreground: #0f172a;
+  --surface: rgba(255, 255, 255, 0.82);
+  --surface-strong: rgba(255, 255, 255, 0.96);
 }
 
 html[data-theme="dark"] {
