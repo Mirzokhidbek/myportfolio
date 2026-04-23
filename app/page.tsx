@@ -2,11 +2,35 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useState } from "react";
+import { useState, useSyncExternalStore } from "react";
+
+type Lang = "en" | "uz";
+
+const LANG_KEY = "lang";
+const LANG_EVENT = "lang-change";
+
+function subscribeLang(onChange: () => void) {
+  window.addEventListener(LANG_EVENT, onChange);
+  window.addEventListener("storage", onChange);
+  return () => {
+    window.removeEventListener(LANG_EVENT, onChange);
+    window.removeEventListener("storage", onChange);
+  };
+}
+
+function getLang(): Lang {
+  return localStorage.getItem(LANG_KEY) === "uz" ? "uz" : "en";
+}
+
+function setStoredLang(lang: Lang) {
+  localStorage.setItem(LANG_KEY, lang);
+  window.dispatchEvent(new Event(LANG_EVENT));
+}
 
 export default function Home() {
   const [projectFilter, setProjectFilter] = useState<"all" | "frontend" | "backend" | "fullstack">("all");
-  const [lang, setLang] = useState<"en" | "uz">("en");
+  // Saved per browser so the choice survives reloads.
+  const lang = useSyncExternalStore(subscribeLang, getLang, () => "en" as Lang);
   const skills = [
     "Java",
     "Algorithms",
@@ -140,7 +164,8 @@ export default function Home() {
 
           <div className="flex items-center gap-3">
             <button
-              onClick={() => setLang((prev) => (prev === "en" ? "uz" : "en"))}
+              type="button"
+              onClick={() => setStoredLang(lang === "en" ? "uz" : "en")}
               className="rounded-xl border border-slate-400/60 bg-[var(--surface-strong)] px-3 py-1.5 text-xs text-slate-950 transition hover:border-emerald-300 hover:text-slate-900 dark:border-white/20 dark:bg-[var(--surface)] dark:text-slate-100"
             >
               {lang === "en" ? "UZ" : "EN"}
