@@ -141,7 +141,7 @@ export default function Home() {
           <div className="flex items-center gap-3">
             <button
               onClick={() => setLang((prev) => (prev === "en" ? "uz" : "en"))}
-              className="hidden rounded-xl border border-slate-400/60 bg-[var(--surface-strong)] px-3 py-1.5 text-xs text-slate-950 transition hover:border-emerald-300 hover:text-slate-900 dark:border-white/20 dark:bg-[var(--surface)] dark:text-slate-100 md:inline"
+              className="rounded-xl border border-slate-400/60 bg-[var(--surface-strong)] px-3 py-1.5 text-xs text-slate-950 transition hover:border-emerald-300 hover:text-slate-900 dark:border-white/20 dark:bg-[var(--surface)] dark:text-slate-100"
             >
               {lang === "en" ? "UZ" : "EN"}
             </button>
