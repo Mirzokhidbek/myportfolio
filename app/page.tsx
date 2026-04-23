@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useState, useSyncExternalStore } from "react";
+import { useEffect, useState, useSyncExternalStore } from "react";
 
 type Lang = "en" | "uz";
 
@@ -31,6 +31,11 @@ export default function Home() {
   const [projectFilter, setProjectFilter] = useState<"all" | "frontend" | "backend" | "fullstack">("all");
   // Saved per browser so the choice survives reloads.
   const lang = useSyncExternalStore(subscribeLang, getLang, () => "en" as Lang);
+
+  // Keep <html lang> in sync so screen readers and translators know the page language.
+  useEffect(() => {
+    document.documentElement.lang = lang;
+  }, [lang]);
   const skills = [
     "Java",
     "Algorithms",
