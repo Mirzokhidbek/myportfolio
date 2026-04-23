@@ -136,6 +136,15 @@ export default function Home() {
     },
   }[lang];
 
+  const navItems = [
+    { label: i18n.home, href: "/" },
+    { label: i18n.experience, href: "#experience" },
+    { label: i18n.education, href: "#education" },
+    { label: i18n.skills, href: "#skills" },
+    { label: i18n.contact, href: "#contact" },
+    { label: i18n.blog, href: "/blog" },
+  ];
+
   return (
     <main className="min-h-screen bg-[var(--background)] text-[var(--foreground)] px-6 py-8 overflow-hidden">
       <div className="pointer-events-none fixed inset-0 -z-10">
@@ -153,14 +162,7 @@ export default function Home() {
           </div>
 
           <div className="hidden items-center gap-5 text-sm text-slate-800 dark:text-slate-200 md:flex">
-            {[
-              { label: i18n.home, href: "/" },
-              { label: i18n.experience, href: "#experience" },
-              { label: i18n.education, href: "#education" },
-              { label: i18n.skills, href: "#skills" },
-              { label: i18n.contact, href: "#contact" },
-              { label: i18n.blog, href: "/blog" },
-            ].map((item) => (
+            {navItems.map((item) => (
               <Link key={item.label} href={item.href} className="transition text-slate-800 hover:text-slate-950 dark:text-slate-200 dark:hover:text-white">
                 {item.label}
               </Link>
@@ -183,6 +185,19 @@ export default function Home() {
             </a>
           </div>
         </nav>
+
+        {/* Section links for small screens, where the nav bar above hides them */}
+        <div className="-mt-4 flex gap-2 overflow-x-auto pb-1 text-sm md:hidden">
+          {navItems.map((item) => (
+            <Link
+              key={item.label}
+              href={item.href}
+              className="shrink-0 rounded-full border border-slate-200/70 bg-[var(--surface)] px-3 py-1.5 text-slate-800 dark:border-white/10 dark:text-slate-200"
+            >
+              {item.label}
+            </Link>
+          ))}
+        </div>
 
         <section className="grid gap-8 lg:grid-cols-[1.35fr_.85fr]">
           <div
