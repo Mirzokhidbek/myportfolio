@@ -343,10 +343,14 @@ export default function Home() {
                     <a href={project.github} target="_blank" rel="noreferrer" className="text-emerald-500 hover:text-emerald-300">
                       GitHub
                     </a>
-                    <span className="text-slate-600">·</span>
-                    <a href={project.demo} target="_blank" rel="noreferrer" className="text-cyan-700 hover:text-cyan-900 dark:text-cyan-300 dark:hover:text-cyan-100">
-                      Live Demo
-                    </a>
+                    {project.demo && project.demo !== "#" ? (
+                      <>
+                        <span className="text-slate-600">·</span>
+                        <a href={project.demo} target="_blank" rel="noreferrer" className="text-cyan-700 hover:text-cyan-900 dark:text-cyan-300 dark:hover:text-cyan-100">
+                          Live Demo
+                        </a>
+                      </>
+                    ) : null}
                   </div>
                 </div>
               </article>
