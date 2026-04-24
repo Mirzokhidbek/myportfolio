@@ -258,11 +258,23 @@ export default function Home() {
               <div className="mt-5 space-y-3 rounded-3xl border border-slate-200/70 bg-[var(--surface)] p-4 text-sm text-slate-950 dark:border-white/10 dark:bg-[var(--surface-strong)] dark:text-slate-100">
                 <div>
                   <p className="font-semibold text-slate-900 dark:text-white">Contact</p>
-                  <p className="mt-2 text-slate-800 dark:text-slate-300">nurmuhammadovmirzohid678@gmail.com</p>
+                  <a
+                    href="mailto:nurmuhammadovmirzohid678@gmail.com"
+                    className="mt-2 block break-all text-slate-800 hover:text-emerald-600 dark:text-slate-300 dark:hover:text-emerald-300"
+                  >
+                    nurmuhammadovmirzohid678@gmail.com
+                  </a>
                 </div>
                 <div>
                   <p className="font-semibold text-slate-900 dark:text-white">LinkedIn</p>
-                  <p className="mt-2 text-slate-800 dark:text-slate-300">linkedin.com/in/mirzohidbek-nurmukhammadov-88a01a2a8</p>
+                  <a
+                    href="https://www.linkedin.com/in/mirzohidbek-nurmukhammadov-88a01a2a8"
+                    target="_blank"
+                    rel="noreferrer"
+                    className="mt-2 block break-all text-slate-800 hover:text-emerald-600 dark:text-slate-300 dark:hover:text-emerald-300"
+                  >
+                    linkedin.com/in/mirzohidbek-nurmukhammadov-88a01a2a8
+                  </a>
                 </div>
                 <div>
                   <p className="font-semibold text-slate-900 dark:text-white">Education</p>
