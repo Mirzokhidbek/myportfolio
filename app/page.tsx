@@ -138,6 +138,7 @@ export default function Home() {
 
   const navItems = [
     { label: i18n.home, href: "/" },
+    { label: i18n.projects, href: "#projects" },
     { label: i18n.experience, href: "#experience" },
     { label: i18n.education, href: "#education" },
     { label: i18n.skills, href: "#skills" },
@@ -306,6 +307,8 @@ export default function Home() {
               {["all", "frontend", "backend", "fullstack"].map((type) => (
                 <button
                   key={type}
+                  type="button"
+                  aria-pressed={projectFilter === type}
                   onClick={() => setProjectFilter(type as "all" | "frontend" | "backend" | "fullstack")}
                   className={`rounded-full px-4 py-2 text-sm transition ${
                     projectFilter === type
