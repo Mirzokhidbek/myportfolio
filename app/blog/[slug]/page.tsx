@@ -50,6 +50,11 @@ export default async function BlogPostPage({
     .filter((p) => p.slug !== post.slug)
     .slice(0, 3);
 
+  // allPosts is newest first.
+  const index = allPosts.findIndex((p) => p.slug === post.slug);
+  const newerPost = index > 0 ? allPosts[index - 1] : null;
+  const olderPost = index >= 0 && index < allPosts.length - 1 ? allPosts[index + 1] : null;
+
   const headings = extractHeadings(post.content);
 
   // Structured data so search engines can show the post as an article.
@@ -143,6 +148,31 @@ export default async function BlogPostPage({
             <div className="mt-6">
               <PostInteractions slug={post.slug} title={post.title} />
             </div>
+
+            {newerPost || olderPost ? (
+              <nav className="mt-6 grid gap-3 sm:grid-cols-2" aria-label="More posts">
+                {olderPost ? (
+                  <Link
+                    href={`/blog/${olderPost.slug}`}
+                    className="rounded-2xl border border-slate-200 bg-white/90 p-4 transition hover:border-emerald-500/40 dark:border-white/10 dark:bg-white/5"
+                  >
+                    <span className="text-xs text-slate-500 dark:text-zinc-500">← Previous post</span>
+                    <span className="mt-1 block font-medium">{olderPost.title}</span>
+                  </Link>
+                ) : (
+                  <span />
+                )}
+                {newerPost ? (
+                  <Link
+                    href={`/blog/${newerPost.slug}`}
+                    className="rounded-2xl border border-slate-200 bg-white/90 p-4 text-right transition hover:border-emerald-500/40 dark:border-white/10 dark:bg-white/5"
+                  >
+                    <span className="text-xs text-slate-500 dark:text-zinc-500">Next post →</span>
+                    <span className="mt-1 block font-medium">{newerPost.title}</span>
+                  </Link>
+                ) : null}
+              </nav>
+            ) : null}
 
             <div className="mt-6">
               <CommentsSection slug={post.slug} />
