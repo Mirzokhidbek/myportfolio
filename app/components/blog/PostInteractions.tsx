@@ -19,6 +19,7 @@ export default function PostInteractions({
   const [userId, setUserId] = useState<string | null>(null);
   const [likeError, setLikeError] = useState("");
   const [copied, setCopied] = useState(false);
+  const [liking, setLiking] = useState(false);
   // Browser-only values; on the server these return the fallback.
   const mounted = useSyncExternalStore(noopSubscribe, () => true, () => false);
   const canShare = useSyncExternalStore(noopSubscribe, () => "share" in navigator, () => false);
@@ -66,19 +67,27 @@ export default function PostInteractions({
   }, [slug]);
 
   async function onLike() {
+    if (liking) return;
     setLikeError("");
-    const res = await fetch(`/api/posts/${slug}/engagement`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ action: "like" }),
-    });
-    const data = await res.json();
-    if (!res.ok || !data.ok) {
-      setLikeError(data.error ?? "Could not update like.");
-      return;
+    setLiking(true);
+    try {
+      const res = await fetch(`/api/posts/${slug}/engagement`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "like" }),
+      });
+      const data = await res.json();
+      if (!res.ok || !data.ok) {
+        setLikeError(data.error ?? "Could not update like.");
+        return;
+      }
+      setStats(data.stats);
+      setLiked(Boolean(data.liked));
+    } catch {
+      setLikeError("Could not update like.");
+    } finally {
+      setLiking(false);
     }
-    setStats(data.stats);
-    setLiked(Boolean(data.liked));
   }
 
   async function onShareNative() {
@@ -134,7 +143,8 @@ export default function PostInteractions({
             <button
               type="button"
               onClick={() => onLike()}
-              className={`px-3 py-2 rounded-xl border text-sm transition ${
+              disabled={liking}
+              className={`px-3 py-2 rounded-xl border text-sm transition disabled:opacity-60 ${
                 liked
                   ? "border-rose-400/50 bg-rose-500/20 text-rose-900 dark:text-rose-100"
                   : "border-slate-300 hover:bg-slate-200/80 dark:border-white/15 dark:hover:bg-white/10"
