@@ -18,6 +18,7 @@ export default function PostInteractions({
   const [liked, setLiked] = useState(false);
   const [userId, setUserId] = useState<string | null>(null);
   const [likeError, setLikeError] = useState("");
+  const [copied, setCopied] = useState(false);
   // Browser-only values; on the server these return the fallback.
   const mounted = useSyncExternalStore(noopSubscribe, () => true, () => false);
   const canShare = useSyncExternalStore(noopSubscribe, () => "share" in navigator, () => false);
@@ -109,7 +110,13 @@ export default function PostInteractions({
 
   async function onCopyLink() {
     if (!shareUrl) return;
-    await navigator.clipboard.writeText(shareUrl);
+    try {
+      await navigator.clipboard.writeText(shareUrl);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch {
+      setLikeError("Could not copy the link.");
+    }
   }
 
   return (
@@ -150,7 +157,7 @@ export default function PostInteractions({
                 onClick={() => onCopyLink()}
                 className="px-3 py-2 rounded-xl border border-slate-300 hover:bg-slate-200/80 dark:border-white/15 dark:hover:bg-white/10 text-sm transition"
               >
-                Copy Link
+                {copied ? "Copied!" : "Copy Link"}
               </button>
               <button
                 type="button"
