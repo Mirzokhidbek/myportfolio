@@ -251,7 +251,15 @@ export default function Home() {
           >
             <div className="rounded-[32px] border border-slate-200/70 bg-[var(--surface-strong)] p-6 shadow-xl shadow-cyan-500/5 backdrop-blur-xl dark:border-white/10 dark:bg-[var(--surface)]">
               <div className="relative overflow-hidden rounded-3xl border border-slate-700/90 bg-[var(--surface)] dark:border-slate-700/80 dark:bg-[var(--surface-strong)]">
-                <Image src="/profile.JPG" alt="Mirzohid profile" width={800} height={1000} className="h-[420px] w-full object-cover" />
+                <Image
+                  src="/profile.JPG"
+                  alt="Mirzohid profile"
+                  width={800}
+                  height={1000}
+                  preload
+                  sizes="(min-width: 1024px) 400px, 100vw"
+                  className="h-[420px] w-full object-cover"
+                />
                 <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/20 via-transparent to-transparent p-4 dark:from-slate-950/90">
                   <p className="text-sm text-slate-900 dark:text-slate-100">Seoul, South Korea</p>
                 </div>
