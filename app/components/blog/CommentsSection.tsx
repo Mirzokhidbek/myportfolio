@@ -11,6 +11,25 @@ type CommentItem = {
   canDelete: boolean;
 };
 
+const UNITS: Array<[Intl.RelativeTimeFormatUnit, number]> = [
+  ["year", 60 * 60 * 24 * 365],
+  ["month", 60 * 60 * 24 * 30],
+  ["week", 60 * 60 * 24 * 7],
+  ["day", 60 * 60 * 24],
+  ["hour", 60 * 60],
+  ["minute", 60],
+];
+
+/** "3 hours ago", "yesterday", "just now". */
+function timeAgo(iso: string) {
+  const seconds = Math.round((new Date(iso).getTime() - Date.now()) / 1000);
+  const format = new Intl.RelativeTimeFormat("en", { numeric: "auto" });
+  for (const [unit, size] of UNITS) {
+    if (Math.abs(seconds) >= size) return format.format(Math.round(seconds / size), unit);
+  }
+  return "just now";
+}
+
 export default function CommentsSection({ slug }: { slug: string }) {
   const [items, setItems] = useState<CommentItem[]>([]);
   const [message, setMessage] = useState("");
@@ -130,9 +149,13 @@ export default function CommentsSection({ slug }: { slug: string }) {
               <div className="flex items-center justify-between gap-4">
                 <p className="font-medium text-sm">{item.name}</p>
                 <div className="flex items-center gap-3">
-                  <p className="text-xs text-slate-500 dark:text-zinc-500">
-                    {new Date(item.createdAt).toLocaleString()}
-                  </p>
+                  <time
+                    dateTime={item.createdAt}
+                    title={new Date(item.createdAt).toLocaleString()}
+                    className="text-xs text-slate-500 dark:text-zinc-500"
+                  >
+                    {timeAgo(item.createdAt)}
+                  </time>
                   {item.canDelete ? (
                     <button
                       type="button"
