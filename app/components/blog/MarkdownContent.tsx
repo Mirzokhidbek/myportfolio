@@ -13,6 +13,20 @@ function domProps<T extends { node?: unknown }>(props: T) {
   return rest;
 }
 
+/** "#" link shown on hover so readers can share a link to a section. */
+function HeadingAnchor({ id }: { id?: string }) {
+  if (!id) return null;
+  return (
+    <a
+      href={`#${id}`}
+      aria-label="Link to this section"
+      className="ml-2 text-emerald-600 opacity-0 transition group-hover:opacity-100 focus:opacity-100 dark:text-emerald-300"
+    >
+      #
+    </a>
+  );
+}
+
 export default function MarkdownContent({ content }: { content: string }) {
   const components: Components = {
     h1: ({ children }) => (
@@ -22,18 +36,20 @@ export default function MarkdownContent({ content }: { content: string }) {
     ),
     h2: ({ children, ...props }) => (
       <h2
-        className="mt-10 mb-4 text-2xl font-semibold tracking-tight scroll-mt-24"
+        className="group mt-10 mb-4 text-2xl font-semibold tracking-tight scroll-mt-24"
         {...domProps(props)}
       >
         {children}
+        <HeadingAnchor id={props.id} />
       </h2>
     ),
     h3: ({ children, ...props }) => (
       <h3
-        className="mt-8 mb-3 text-xl font-semibold tracking-tight scroll-mt-24"
+        className="group mt-8 mb-3 text-xl font-semibold tracking-tight scroll-mt-24"
         {...domProps(props)}
       >
         {children}
+        <HeadingAnchor id={props.id} />
       </h3>
     ),
     p: ({ children }) => (
