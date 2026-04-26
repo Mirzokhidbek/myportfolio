@@ -4,6 +4,7 @@ import rehypeSlug from "rehype-slug";
 import rehypeHighlight from "rehype-highlight";
 
 import type { Components } from "react-markdown";
+import CodeBlock from "@/app/components/blog/CodeBlock";
 
 /** react-markdown passes its AST `node` to components; keep it off DOM elements. */
 function domProps<T extends { node?: unknown }>(props: T) {
@@ -87,11 +88,7 @@ export default function MarkdownContent({ content }: { content: string }) {
         {children}
       </td>
     ),
-    pre: ({ children }) => (
-      <pre className="mt-8 overflow-x-auto rounded-2xl border border-slate-200 bg-slate-900/[0.03] dark:border-white/10 dark:bg-black/40 p-4">
-        {children}
-      </pre>
-    ),
+    pre: ({ children }) => <CodeBlock>{children}</CodeBlock>,
     code: (props) => {
       const { className, children } = props;
       // react-markdown v10 has no `inline` flag: fenced blocks carry a language
