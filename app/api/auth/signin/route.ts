@@ -4,6 +4,7 @@ import { prisma } from "@/lib/prisma";
 import { syncAdminRoleFromEnv } from "@/lib/user-role";
 import { signAuthToken, AUTH_COOKIE } from "@/lib/auth-token";
 import { authCookieOptions } from "@/lib/auth-cookie";
+import { clientIp, rateLimit } from "@/lib/rate-limit";
 
 // Compared against when the email is unknown, so both cases take about the same time.
 const DUMMY_HASH = bcrypt.hashSync("not-a-real-password", 12);
@@ -15,6 +16,14 @@ type Body = {
 
 export async function POST(req: Request) {
   try {
+    const limit = rateLimit(`signin:${clientIp(req)}`, 10, 15 * 60 * 1000);
+    if (!limit.ok) {
+      return NextResponse.json(
+        { ok: false, error: "Too many sign in attempts. Try again later." },
+        { status: 429, headers: { "Retry-After": String(limit.retryAfterSeconds) } }
+      );
+    }
+
     const body = (await req.json()) as Body;
     const email = String(body.email ?? "").trim().toLowerCase();
     const password = String(body.password ?? "");
