@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { addComment, deleteComment, getComments } from "@/lib/engagement";
 import { getSession } from "@/lib/session";
 import { postExists } from "@/lib/blog";
+import { rateLimit } from "@/lib/rate-limit";
 
 type CreateBody = {
   message?: string;
@@ -34,6 +35,14 @@ export async function POST(
       return NextResponse.json(
         { ok: false, error: "You must be signed in to comment." },
         { status: 401 }
+      );
+    }
+
+    const limit = rateLimit(`comment:${session.sub}`, 5, 2 * 60 * 1000);
+    if (!limit.ok) {
+      return NextResponse.json(
+        { ok: false, error: "You're commenting too fast. Please wait a moment." },
+        { status: 429, headers: { "Retry-After": String(limit.retryAfterSeconds) } }
       );
     }
 
