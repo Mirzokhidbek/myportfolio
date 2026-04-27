@@ -73,7 +73,8 @@ export default function CommentsSection({ slug }: { slug: string }) {
         return;
       }
       setMessage("");
-      await loadComments();
+      // The API returns the saved comment, so add it without reloading the list.
+      setItems((current) => [...current, data.comment as CommentItem]);
     } catch {
       setError("Failed to post comment.");
     } finally {
