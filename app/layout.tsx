@@ -56,8 +56,16 @@ export default function RootLayout({
         <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
       </head>
       <body className="min-h-full flex flex-col pt-12">
+        <a
+          href="#main-content"
+          className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-14 focus:z-[70] focus:rounded-lg focus:bg-emerald-500 focus:px-3 focus:py-2 focus:text-sm focus:font-medium focus:text-black"
+        >
+          Skip to content
+        </a>
         <GlobalSiteControls />
-        {children}
+        <div id="main-content" className="flex flex-1 flex-col">
+          {children}
+        </div>
       </body>
     </html>
   );
