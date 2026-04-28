@@ -5,6 +5,7 @@ import type { Metadata } from "next";
 import { getAllPosts, getPostBySlug, extractHeadings } from "@/lib/blog";
 import { formatPostDate } from "@/lib/format-date";
 import { SITE_URL } from "@/lib/site";
+import { getSession } from "@/lib/session";
 import ReadingProgress from "@/app/components/blog/ReadingProgress";
 import MarkdownContent from "@/app/components/blog/MarkdownContent";
 import PostInteractions from "@/app/components/blog/PostInteractions";
@@ -17,7 +18,8 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { slug } = await params;
   const post = await getPostBySlug(slug);
-  if (!post) {
+  // Don't leak draft titles in metadata.
+  if (!post || post.draft) {
     return { title: "Post not found | Blog" };
   }
   return {
@@ -44,6 +46,8 @@ export default async function BlogPostPage({
   const { slug } = await params;
   const post = await getPostBySlug(slug);
   if (!post) return notFound();
+  // Drafts are only visible to admins (as a preview).
+  if (post.draft && (await getSession())?.role !== "ADMIN") return notFound();
 
   const allPosts = await getAllPosts();
   const recent = allPosts

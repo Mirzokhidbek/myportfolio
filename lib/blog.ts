@@ -16,6 +16,8 @@ export type BlogPostListItem = {
   coverImage: string;
   excerpt: string;
   readingTimeMinutes: number;
+  /** `draft: true` in front matter hides the post from public lists. */
+  draft: boolean;
 };
 
 export type BlogPost = BlogPostListItem & {
@@ -117,6 +119,7 @@ function parsePost(slug: string, raw: string, excerptLength: number) {
     coverImage,
     excerpt,
     readingTimeMinutes: estimateReadingTimeMinutes(parsed.content),
+    draft: parsed.data.draft === true,
   };
   return { item, content: parsed.content };
 }
@@ -131,7 +134,7 @@ export async function postExists(slug: string) {
   }
 }
 
-export async function getAllPosts(): Promise<BlogPostListItem[]> {
+export async function getAllPosts({ includeDrafts = false } = {}): Promise<BlogPostListItem[]> {
   const entries = await fs.readdir(BLOG_DIR, { withFileTypes: true });
   const mdFiles = entries
     .filter((e) => e.isFile() && e.name.endsWith(".md") && !e.name.startsWith("_"))
@@ -142,7 +145,9 @@ export async function getAllPosts(): Promise<BlogPostListItem[]> {
   for (const fileName of mdFiles) {
     const slug = fileName.replace(/\.md$/, "");
     const raw = await fs.readFile(path.join(BLOG_DIR, fileName), "utf8");
-    posts.push(parsePost(slug, raw, 140).item);
+    const { item } = parsePost(slug, raw, 140);
+    if (item.draft && !includeDrafts) continue;
+    posts.push(item);
   }
 
   // Newest first; posts from the same day keep a stable order by title.

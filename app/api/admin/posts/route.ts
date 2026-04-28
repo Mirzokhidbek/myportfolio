@@ -24,7 +24,7 @@ export async function GET() {
         { status: 401 }
       );
     }
-    const posts = await getAllPosts();
+    const posts = await getAllPosts({ includeDrafts: true });
     return NextResponse.json({ ok: true, posts });
   } catch (error) {
     const message = error instanceof Error ? error.message : "Failed to load posts.";
