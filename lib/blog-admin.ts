@@ -32,7 +32,8 @@ function toSlug(value: string) {
     .trim()
     .replace(/[^a-z0-9\s-]/g, "")
     .replace(/\s+/g, "-")
-    .replace(/-+/g, "-");
+    .replace(/-+/g, "-")
+    .replace(/^-|-$/g, "");
 }
 
 function normalizeDate(date?: string) {
@@ -86,7 +87,10 @@ export async function createPost(input: AdminPostInput) {
   if (!title || !excerpt || !content) throw new Error("Title, excerpt and content are required.");
 
   const date = normalizeDate(input.date);
-  const slug = `${date}-${toSlug(title) || "daily-post"}`;
+  // Titles with no Latin letters (e.g. Cyrillic) give an empty slug; add a short
+  // unique id so two such posts on the same day don't collide.
+  const base = toSlug(title) || `post-${Date.now().toString(36)}`;
+  const slug = `${date}-${base}`;
   const filePath = path.join(BLOG_DIR, `${slug}.md`);
   const tags = normalizeTags(input.tags);
   const category = normalizeCategory(input.category);
