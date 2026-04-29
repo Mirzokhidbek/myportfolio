@@ -27,6 +27,30 @@ type AdminUser = {
   createdAt: string;
 };
 
+const DEFAULT_CONTENT = "## Today\n\nWrite your daily update here.";
+
+type FormValues = {
+  title: string;
+  date: string;
+  tags: string;
+  category: string;
+  coverImage: string;
+  excerpt: string;
+  content: string;
+  draft: boolean;
+};
+
+const EMPTY_FORM: FormValues = {
+  title: "",
+  date: "",
+  tags: "daily, notes",
+  category: "general",
+  coverImage: "",
+  excerpt: "",
+  content: DEFAULT_CONTENT,
+  draft: false,
+};
+
 export default function AdminPage() {
   const router = useRouter();
   const [editFromQuery, setEditFromQuery] = useState<string | null>(null);
@@ -40,7 +64,7 @@ export default function AdminPage() {
   const [coverLocalPreview, setCoverLocalPreview] = useState<string | null>(null);
   const [coverUploading, setCoverUploading] = useState(false);
   const [excerpt, setExcerpt] = useState("");
-  const [content, setContent] = useState("## Today\n\nWrite your daily update here.");
+  const [content, setContent] = useState(DEFAULT_CONTENT);
   const [inlineFile, setInlineFile] = useState<File | null>(null);
   const [inlineAltText, setInlineAltText] = useState("image");
   const [inlineUploading, setInlineUploading] = useState(false);
@@ -58,6 +82,21 @@ export default function AdminPage() {
   const [usersError, setUsersError] = useState("");
   const [editingSlug, setEditingSlug] = useState<string | null>(null);
   const [editorColorMode, setEditorColorMode] = useState<"light" | "dark">("dark");
+
+  // Compared with the last saved values to warn before leaving with unsaved changes.
+  const currentForm = JSON.stringify({ title, date, tags, category, coverImage, excerpt, content, draft });
+  const [savedForm, setSavedForm] = useState(JSON.stringify(EMPTY_FORM));
+  const hasUnsavedChanges = currentForm !== savedForm;
+
+  useEffect(() => {
+    if (!hasUnsavedChanges) return;
+    const onBeforeUnload = (e: BeforeUnloadEvent) => {
+      e.preventDefault();
+      e.returnValue = "";
+    };
+    window.addEventListener("beforeunload", onBeforeUnload);
+    return () => window.removeEventListener("beforeunload", onBeforeUnload);
+  }, [hasUnsavedChanges]);
 
   const normalizedTags = useMemo(
     () =>
@@ -126,6 +165,7 @@ export default function AdminPage() {
 
       setResultAction("created");
       setCreatedUrl(data.url);
+      setSavedForm(JSON.stringify({ ...EMPTY_FORM, date, tags }));
       setTitle("");
       setExcerpt("");
       setCategory("general");
@@ -136,7 +176,7 @@ export default function AdminPage() {
       setInlineFile(null);
       setInlineLocalPreview(null);
       setInlineImageUrl("");
-      setContent("## Today\n\nWrite your daily update here.");
+      setContent(DEFAULT_CONTENT);
       await loadPosts();
     } catch {
       setError("Something went wrong while creating the post.");
@@ -204,6 +244,18 @@ export default function AdminPage() {
     setCategory(post.category || "general");
     setCoverImage(post.coverImage || "");
     setDraft(Boolean(post.draft));
+    setSavedForm(
+      JSON.stringify({
+        title: post.title,
+        date: post.date,
+        tags: post.tags.join(", "),
+        category: post.category || "general",
+        coverImage: post.coverImage || "",
+        excerpt: post.excerpt,
+        content: post.content,
+        draft: Boolean(post.draft),
+      })
+    );
     setCoverFile(null);
     setCoverLocalPreview(null);
     setCoverUploading(false);
@@ -240,6 +292,7 @@ export default function AdminPage() {
         return;
       }
       setEditingSlug(null);
+      setSavedForm(currentForm);
       setResultAction("updated");
       setCreatedUrl(`/blog/${editingSlug}`);
       await loadPosts();
@@ -324,6 +377,7 @@ export default function AdminPage() {
 
   function clearForm() {
     setEditingSlug(null);
+    setSavedForm(JSON.stringify(EMPTY_FORM));
     setTitle("");
     setDate("");
     setTags("daily, notes");
@@ -334,7 +388,7 @@ export default function AdminPage() {
     setCoverLocalPreview(null);
     setCoverUploading(false);
     setExcerpt("");
-    setContent("## Today\n\nWrite your daily update here.");
+    setContent(DEFAULT_CONTENT);
     setCreatedUrl("");
     setInlineFile(null);
     setInlineLocalPreview(null);
