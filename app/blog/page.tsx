@@ -50,6 +50,17 @@ export default async function BlogPage({
   const start = (safePage - 1) * PAGE_SIZE;
   const filtered = filteredAll.slice(start, start + PAGE_SIZE);
 
+  const pageHref = (p: number) => {
+    const params = new URLSearchParams();
+    if (q) params.set("q", q);
+    if (tag) params.set("tag", tag);
+    if (category) params.set("category", category);
+    if (p > 1) params.set("page", String(p));
+    return params.toString() ? `/blog?${params.toString()}` : "/blog";
+  };
+  const pagerLinkClass =
+    "px-3 py-2 rounded-xl text-sm border transition bg-white/90 dark:bg-white/5 border-slate-200 dark:border-white/10 text-slate-700 dark:text-zinc-200 hover:bg-slate-200/80 dark:hover:bg-white/10";
+
   const allTags = Array.from(
     new Set(posts.flatMap((p) => p.tags))
   ).sort((a, b) => a.localeCompare(b));
@@ -249,14 +260,14 @@ export default async function BlogPage({
         )}
 
         {filteredAll.length > 0 && totalPages > 1 ? (
-          <nav className="mt-10 flex flex-wrap items-center justify-center gap-2">
+          <nav className="mt-10 flex flex-wrap items-center justify-center gap-2" aria-label="Pages">
+            {safePage > 1 ? (
+              <Link href={pageHref(safePage - 1)} className={pagerLinkClass}>
+                ← Previous
+              </Link>
+            ) : null}
             {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => {
-              const params = new URLSearchParams();
-              if (q) params.set("q", q);
-              if (tag) params.set("tag", tag);
-              if (category) params.set("category", category);
-              if (p > 1) params.set("page", String(p));
-              const href = params.toString() ? `/blog?${params.toString()}` : "/blog";
+              const href = pageHref(p);
               const active = p === safePage;
               return (
                 <Link
@@ -272,6 +283,11 @@ export default async function BlogPage({
                 </Link>
               );
             })}
+            {safePage < totalPages ? (
+              <Link href={pageHref(safePage + 1)} className={pagerLinkClass}>
+                Next →
+              </Link>
+            ) : null}
           </nav>
         ) : null}
       </div>
