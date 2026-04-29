@@ -12,6 +12,7 @@ type UpdateRequest = {
   category?: string;
   coverImage?: string;
   author?: string;
+  draft?: boolean;
 };
 
 function unauthorized() {

@@ -14,6 +14,7 @@ type CreatePostRequest = {
   date?: string;
   category?: string;
   coverImage?: string;
+  draft?: boolean;
 };
 
 export async function GET() {
@@ -52,6 +53,7 @@ export async function POST(req: Request) {
       date: body.date,
       category: body.category,
       coverImage: body.coverImage,
+      draft: body.draft === true,
       author: admin.name,
     });
 

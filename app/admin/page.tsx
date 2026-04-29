@@ -16,6 +16,7 @@ type AdminPost = {
   tags: string[];
   category: string;
   coverImage: string;
+  draft?: boolean;
 };
 
 type AdminUser = {
@@ -34,6 +35,7 @@ export default function AdminPage() {
   const [tags, setTags] = useState("daily, notes");
   const [category, setCategory] = useState("general");
   const [coverImage, setCoverImage] = useState("");
+  const [draft, setDraft] = useState(false);
   const [coverFile, setCoverFile] = useState<File | null>(null);
   const [coverLocalPreview, setCoverLocalPreview] = useState<string | null>(null);
   const [coverUploading, setCoverUploading] = useState(false);
@@ -112,6 +114,7 @@ export default function AdminPage() {
           coverImage,
           excerpt,
           content,
+          draft,
         }),
       });
 
@@ -127,6 +130,7 @@ export default function AdminPage() {
       setExcerpt("");
       setCategory("general");
       setCoverImage("");
+      setDraft(false);
       setCoverFile(null);
       setCoverLocalPreview(null);
       setInlineFile(null);
@@ -199,6 +203,7 @@ export default function AdminPage() {
     setTags(post.tags.join(", "));
     setCategory(post.category || "general");
     setCoverImage(post.coverImage || "");
+    setDraft(Boolean(post.draft));
     setCoverFile(null);
     setCoverLocalPreview(null);
     setCoverUploading(false);
@@ -226,6 +231,7 @@ export default function AdminPage() {
           coverImage,
           excerpt,
           content,
+          draft,
         }),
       });
       const data = await res.json();
@@ -323,6 +329,7 @@ export default function AdminPage() {
     setTags("daily, notes");
     setCategory("general");
     setCoverImage("");
+    setDraft(false);
     setCoverFile(null);
     setCoverLocalPreview(null);
     setCoverUploading(false);
@@ -424,6 +431,18 @@ export default function AdminPage() {
                 className="mt-2 w-full rounded-xl border border-slate-200 dark:border-white/10 bg-white text-slate-900 dark:bg-black/30 dark:text-white px-3 py-2 outline-none focus:ring-2 focus:ring-emerald-500/40"
                 placeholder="YYYY-MM-DD"
               />
+            </label>
+
+            <label className="flex items-center gap-2 self-end pb-2">
+              <input
+                type="checkbox"
+                checked={draft}
+                onChange={(e) => setDraft(e.target.checked)}
+                className="h-4 w-4 accent-emerald-500"
+              />
+              <span className="text-sm text-slate-600 dark:text-zinc-300">
+                Draft (only admins can see it)
+              </span>
             </label>
 
             <label className="block">
@@ -644,7 +663,14 @@ export default function AdminPage() {
                   className="rounded-xl border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-black/20 p-4 flex flex-col md:flex-row md:items-center md:justify-between gap-3"
                 >
                   <div>
-                    <p className="font-medium">{post.title}</p>
+                    <p className="font-medium">
+                      {post.title}
+                      {post.draft ? (
+                        <span className="ml-2 rounded-full bg-amber-500/15 px-2 py-0.5 text-xs text-amber-700 dark:text-amber-300">
+                          Draft
+                        </span>
+                      ) : null}
+                    </p>
                     <p className="text-xs text-slate-500 dark:text-zinc-500 mt-1">
                       {post.slug} · {post.category} · {post.date}
                     </p>

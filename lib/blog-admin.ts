@@ -23,6 +23,7 @@ export type AdminPostInput = {
   category?: string;
   coverImage?: string;
   author?: string;
+  draft?: boolean;
 };
 
 function toSlug(value: string) {
@@ -67,7 +68,7 @@ date: "${input.date}"
 category: "${input.category.replace(/"/g, '\\"')}"
 tags: [${toFrontmatterList(input.tags)}]
 coverImage: "${input.coverImage.replace(/"/g, '\\"')}"
-excerpt: "${input.excerpt.replace(/"/g, '\\"')}"
+excerpt: "${input.excerpt.replace(/"/g, '\\"')}"${input.draft ? "\ndraft: true" : ""}
 ---
 
 ${input.content}
@@ -100,7 +101,8 @@ export async function createPost(input: AdminPostInput) {
     if ((err as NodeJS.ErrnoException).code !== "ENOENT") throw err;
   }
 
-  const body = buildMarkdown({ title, excerpt, content, tags, category, coverImage, date, author });
+  const draft = Boolean(input.draft);
+  const body = buildMarkdown({ title, excerpt, content, tags, category, coverImage, date, author, draft });
   await fs.writeFile(filePath, body, "utf8");
   return { slug, filePath };
 }
@@ -148,6 +150,7 @@ export async function updatePost(slug: string, input: Partial<AdminPostInput>) {
     coverImage: nextCoverImage,
     tags: nextTags,
     author: nextAuthor,
+    draft: typeof input.draft === "boolean" ? input.draft : parsed.data.draft === true,
   });
   await fs.writeFile(filePath, body, "utf8");
 }
@@ -183,6 +186,7 @@ export async function getPostRawBySlug(slug: string) {
     coverImage: String(parsed.data.coverImage ?? ""),
     author: String(parsed.data.author ?? ""),
     tags: Array.isArray(parsed.data.tags) ? parsed.data.tags.map((t: unknown) => String(t)) : [],
+    draft: parsed.data.draft === true,
   };
 }
 
