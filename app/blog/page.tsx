@@ -244,12 +244,9 @@ export default async function BlogPage({
                       ) : null}
                     </div>
 
-                    <div className="mt-6 flex items-center justify-between">
+                    <div className="mt-6">
                       <span className="text-sm text-emerald-700 group-hover:text-emerald-600 dark:text-emerald-300 dark:group-hover:text-emerald-200 transition">
                         Read post →
-                      </span>
-                      <span className="text-xs text-slate-500 dark:text-zinc-500">
-                        /blog/{post.slug}
                       </span>
                     </div>
                   </div>
