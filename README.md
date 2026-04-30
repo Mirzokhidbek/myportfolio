@@ -4,12 +4,14 @@ Personal portfolio and blog built with Next.js. The home page shows experience, 
 
 ## Features
 
-- **Portfolio**: experience, education, skills, languages, interests and projects, with an English / Uzbek switch
-- **Blog**: Markdown posts with code highlighting, table of contents, reading time, reading progress bar, search, tag and category filters, and an RSS feed (`/blog/rss.xml`)
+- **Portfolio**: experience, education, skills, languages, interests and projects, with an English / Uzbek switch that is remembered per browser
+- **Blog**: Markdown posts with code highlighting and copy buttons, table of contents, section links, reading time, reading progress bar, search, tag and category filters, previous/next links, and an RSS feed (`/blog/rss.xml`)
+- **Drafts**: posts marked as drafts are hidden from the blog, sitemap and RSS, and only admins can open them
 - **Admin panel** (`/admin`): create, edit and delete posts, set category, tags and cover image, upload images to Cloudinary
 - **Accounts**: sign up and sign in with email and password (JWT in an httpOnly cookie)
 - **Engagement**: views (counted once per day per browser), likes and comments on every post, plus share by link, Telegram or the native share sheet. Readers can delete their own comments, and admins can delete any comment
 - **Light and dark theme**, saved per browser
+- **Security**: rate limits on sign in (10 per 15 minutes per IP) and comments (5 per 2 minutes per user), and basic security headers
 - **SEO**: page metadata, Open Graph previews, canonical URLs, article structured data (JSON-LD), `sitemap.xml`, `robots.txt` and RSS
 
 ## Tech stack
@@ -68,7 +70,7 @@ Posts are Markdown files in `content/blog/`. You can write them in the admin pan
 npm run post:new -- "My post title"
 ```
 
-Each file starts with front matter:
+Each file starts with front matter (add `draft: true` to hide a post):
 
 ```md
 ---
@@ -115,6 +117,7 @@ The admin panel uploads cover and inline images to Cloudinary. Only image files 
 | `npm run build`    | Generate the Prisma client and build |
 | `npm start`        | Start the production server          |
 | `npm run lint`     | Run ESLint                           |
+| `npm run typecheck` | Check TypeScript types              |
 | `npm run post:new` | Create a new Markdown post           |
 
 ## Project structure
@@ -139,6 +142,8 @@ scripts/new-post.mjs      # Post generator
 
 ## Deploying
 
-Set every variable from `.env.example` in your host's environment settings, and never commit `.env`.
+Requires Node.js 20.9 or newer. Set every variable from `.env.example` in your host's environment settings, and never commit `.env`.
+
+The rate limits are kept in memory, so they apply per server process. If you run several instances, move them to a shared store such as Redis.
 
 Posts are saved as files and data is stored in SQLite, so the app needs a host with a persistent, writable disk. Serverless hosts such as Vercel do not keep file changes, so there the admin panel can't save posts and likes and comments won't persist.
