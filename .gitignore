@@ -23,6 +23,7 @@
 # misc
 .DS_Store
 data/*.db
+prisma/data/*.db
 *.pem
 
 # debug
